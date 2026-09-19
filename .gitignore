@@ -1,0 +1,20 @@
+# Yii2 - dependencias y cache
+/vendor/
+/runtime/
+/web/assets/
+
+# Datos de usuarios y subidas
+/web/uploads/
+
+# Respaldo del repo original (historia de los autores)
+/.git-respaldo-original/
+
+# Archivos grandes / temporales
+/vendor.7z
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Backup de BD (los esquemas versionados viven en /documentation)
+/chat.sql

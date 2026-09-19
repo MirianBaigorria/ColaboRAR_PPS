@@ -1,0 +1,326 @@
+
+
+.chats-index{
+    font-family: "Poppins", sans-serif;
+
+}
+.consPointsNote{
+    display: flex;
+}
+.chat-tarea{
+    padding: 20px 30px 20px 30px;
+    margin-top: 10px;
+    border-radius: 10px;
+    color: #fff;
+    background-color: #EB6500;
+    width: 100%;
+   
+
+}
+
+.consPointsNote h1{
+    font-size: 31px;
+}
+
+#divChat{
+  height:650px !important;
+    background-color: #f9f9f9;
+    color: #363636;
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 10px;
+    border: 2px solid #f1f1f1;
+}
+
+#divChat::-webkit-scrollbar {
+    display: none;
+}
+
+.emoji-wysiwyg-editor {
+    border-radius: 10px !important ;
+    font-weight: 400; 
+    padding-left: 30px !important;
+}
+#btnEnviar{
+   
+        background-color: #2d2d2d;
+        padding: 10px 30px 10px 30px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        width: 70%;
+        border: none;
+    
+}
+
+#myDropzone{
+    background-color: #EB6500;
+    padding: 0px 30px 10px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    width: 30%;
+    border: none;
+    margin-top: 10px;
+    height: 100px;
+    min-height: 100px;
+    margin-top: 0px !important;
+}
+
+.input-drop{
+    display: flex;
+    min-height: 100px;
+    height: 100px;
+    gap: 10px;
+}
+
+.texto-estado-animo{
+    display: flex;
+    justify-content: space-between;
+}
+.texto-estado-animo-p{
+    width: 600px;
+}
+.btns-emociones{
+    margin-top: 10px;
+}
+
+/*eventos*/
+
+/* === ESTRUCTURA GENERAL === */
+.evento-card {
+    display: flex;
+    align-items: flex-start;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+    border-left: 8px solid #94a3b8;
+}
+
+.evento-card:hover {
+    transform: scale(1.01);
+}
+
+/* === IMAGEN === */
+.evento-img img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-right: 16px;
+    border-radius: 12px;
+    background: #fff;
+    padding: 6px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+/* === CONTENIDO === */
+.evento-contenido {
+    flex: 1;
+}
+
+.evento-titulo {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f3f4f5;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* === BADGE "EN CURSO" === */
+.badge-en-curso {
+    background-color: #bbf7d0;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 9999px;
+    padding: 4px 10px;
+    display: inline-block;
+}
+
+/* === TEXTO DETALLE === */
+.evento-detalle p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+/* === BOTONES === */
+.evento-botones {
+    margin-top: 12px;
+}
+
+.evento-botones button,
+.evento-botones a {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* === ESTILOS DE BOTONES === */
+.btn-responder {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.btn-responder:hover {
+    background-color: #2563eb;
+}
+
+.btn-terminar {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-terminar:hover {
+    background-color: #dc2626;
+}
+
+.btn-verdadero {
+    background-color: #22c55e;
+    color: white;
+}
+
+.btn-verdadero:hover {
+    background-color: #16a34a;
+}
+
+.btn-falso {
+    background-color: #f87171;
+    color: white;
+}
+
+.btn-falso:hover {
+    background-color: #dc2626;
+}
+
+/* === COLORES DIFERENCIADOS POR TIPO (opcionales si querés hacer variantes) === */
+.evento-card[data-tipo-evento="pregunta"] {
+    background: #6441A5;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #2a0845, #6441A5) !important;  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #2a0845, #6441A5) !important; 
+    border-left-color: #6441A5;
+}
+
+.evento-card[data-tipo-evento="debate"] {
+ background: -webkit-linear-gradient(to left, #29323c, #485563) !important;  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to left, #29323c, #485563) !important;
+    border-left-color: #29323c;
+}
+
+.evento-card[data-tipo-evento="actividad"] {
+    background-color: #222 !important;
+      border-left: 5px solid #00c6a7;
+
+}
+
+.evento-card[data-tipo-evento="juego"] {
+background: linear-gradient( 135deg, #97ABFF 10%, #123597 100%);
+    border-left-color: #444444;
+}
+.evento-id-estado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.badge-id {
+    background-color: #111827;
+    color: white;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+
+.badge-estado {
+    background-color: #bbf7d0;
+    color: #065f46;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+
+
+.respuesta-pregunta {
+  
+background: #6441A5;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #2a0845, #6441A5) !important;  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #2a0845, #6441A5) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    padding: 20px 25px !important;
+    border-radius: 16px !important;
+    color: #fff !important;
+    margin-bottom: 20px !important;
+    margin-top: 5px !important;
+    font-family: 'Segoe UI', sans-serif !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1) !important;
+    font-size: 15px !important;
+    position: relative !important;
+    line-height: 1.5 !important;
+}
+
+.debate-p, .respuesta-debate {
+background: #485563;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to left, #29323c, #485563) !important;  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to left, #29323c, #485563) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    padding: 20px 25px !important;
+    border-radius: 16px !important;
+    color: #fff !important;
+    margin-bottom: 20px !important;
+	margin-top: 5px !important;
+    font-family: 'Segoe UI', sans-serif !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1) !important;
+    font-size: 15px !important;
+    position: relative !important;
+    line-height: 1.5 !important;
+}
+
+.respuesta-pregunta::before,
+.respuesta-debate::before,
+.debate-p::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: -10px;
+    width: 6px;
+    height: 80%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+
+.btn-valorar-debate , .btn-valorar, .btn-desactivar{
+    background-color: #fff;
+    color: #2d2d2d;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    margin-left: 20px ;
+}
+
+.btn-valorar-debate:hover , .btn-valorar:hover, .btn-desactivar:hover{
+    background-color: #EB6500;
+    color: #fff;
+}
+
+
+

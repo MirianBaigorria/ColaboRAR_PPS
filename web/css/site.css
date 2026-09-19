@@ -1,0 +1,281 @@
+
+
+
+html,
+body {
+    height: 100%;
+    font-family: "Poppins", sans-serif;
+
+}
+
+.wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
+}
+
+.wrap > .container {
+    padding: 70px 15px 20px;
+}
+
+.footer {
+    height: 60px;
+    /*background-color: #f5f5f5; color anterior*/
+    background-color: #dfe4e5;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.jumbotron {
+    text-align: center;
+    background-color: transparent;
+}
+
+.jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+}
+
+.not-set {
+    color: #c55;
+    font-style: italic;
+}
+
+/* add sorting icons to gridview sort links */
+a.asc:after, a.desc:after {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 5px;
+}
+
+a.asc:after {
+    content: /*"\e113"*/ "\e151";
+}
+
+a.desc:after {
+    content: /*"\e114"*/ "\e152";
+}
+
+.sort-numerical a.asc:after {
+    content: "\e153";
+}
+
+.sort-numerical a.desc:after {
+    content: "\e154";
+}
+
+.sort-ordinal a.asc:after {
+    content: "\e155";
+}
+
+.sort-ordinal a.desc:after {
+    content: "\e156";
+}
+
+.grid-view th {
+    white-space: nowrap;
+}
+
+.chat {
+    white-space: nowrap;
+}
+
+.hint-block {
+    display: block;
+    margin-top: 5px;
+    color: #999;
+}
+
+.error-summary {
+    color: #a94442;
+    background: #fdf7f7;
+    border-left: 3px solid #eed3d7;
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
+}
+
+/* align the logout "link" (button in form) of the navbar */
+.nav li > form > button.logout {
+    padding: 15px;
+    border: none;
+}
+
+@media(max-width:767px) {
+    .nav li > form > button.logout {
+        display:block;
+        text-align: left;
+        width: 100%;
+        padding: 10px 15px;
+    }
+}
+
+.nav > li > form > button.logout:focus,
+.nav > li > form > button.logout:hover {
+    text-decoration: none;
+}
+
+.nav > li > form > button.logout:focus {
+    outline: none;
+}
+
+.angry {
+  background: url("../images/enojado.png") no-repeat scroll 0 0 transparent;
+  color: #000000;
+  cursor: pointer;
+  font-weight: bold;
+  height: 60px;
+  width: 60px;
+  background-position-x: center;
+  background-position-y: center;
+}
+
+.fear {
+  background: url("../images/confundido.png") no-repeat scroll 0 0 transparent;
+  color: #000000;
+  cursor: pointer;
+  font-weight: bold;
+  height: 60px;
+  width: 60px;
+  background-position-x: center;
+ background-position-y: center;
+}
+
+.joy {
+  background: url("../images/famoso.png") no-repeat scroll 0 0 transparent;
+  color: #000000;
+  cursor: pointer;
+  font-weight: bold;
+  height: 60px;
+  width: 60px;
+  background-position-x: center;
+  background-position-y: center;
+}
+
+.sadness {
+  background: url("../images/suenos.png") no-repeat scroll 0 0 transparent;
+  color: #000000;
+  cursor: pointer;
+  font-weight: bold;
+  height: 60px;
+  width: 60px;
+  background-position-x: center;
+  background-position-y: center;    
+}
+
+.surprise{
+  background: url("../images/asombrado_2.png") no-repeat scroll 0 0 transparent;
+  color: #000000;
+  cursor: pointer;
+  font-weight: bold;
+  height: 60px;
+  width: 60px;
+ background-position-x: center;
+ background-position-y: center;
+}
+
+.neutral{
+  background: url("../images/neutral_2.png") no-repeat scroll 0 0 transparent;
+  color: #000000;
+  cursor: pointer;
+  font-weight: bold;
+  height: 60px;
+  width: 60px;
+  background-position-x: center;
+  background-position-y: center;
+}
+
+/*Hice cambios*/
+.contenedorGrupos{
+    border:#002432 dotted 2px;
+    color: #002432;
+    background-color: #e9eced;;
+    font-weight: 500;
+    width: 200px;
+    height: 300px;
+    margin: 10px;
+    float:left;
+}
+
+/*Hice cambios*/
+.divAlumno{
+    /*Se cambio width del .divAlumno*/
+    width: 170px;
+    font-weight: 500;
+    border: #002432 solid 1px;
+    background-color: #70dfd4;
+    color: #002432;
+    padding: 5px;
+    margin: 5px;
+    display: inline-block;
+}
+
+/*NAV BAR*/
+.navbar-nav li{
+    font-size: 12px;
+}
+
+.navbar-inverse{
+    background-color: #002432 !important;
+    border-color: #fff;
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand{
+    font-size: 30px;
+}
+
+
+.tipocuenta{
+    /*color: #8672FF !important; color de tipo de cuenta anterior*/
+    color: #FF7124 !important;
+    text-decoration: none;
+    pointer-events: none;
+}
+
+.navbar-inverse .navbar-nav > .active > a{
+    color: #fff;
+    background-color: #080808;
+    border-radius: 10px;
+}
+
+.wrap > .container {
+    margin: 120px auto;
+    padding:0px;
+}
+
+/*Agregue esto para cambiar y acomodar el container dentro del footer*/
+.footer > .container{
+    width: inherit;
+    margin:0px;
+    padding-left: 60px;
+    padding-right: 60px;
+    background-color: #dfe4e5;
+    
+}
+
+.breadcrumb {
+    padding: 20px 15px;
+    margin-bottom: 20px;
+    list-style: none;
+    /*background-color: #262626; color anterior*/
+    background-color: #002432;
+    border-radius: 10px;
+}
+
+.breadcrumb li{
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+}
+.breadcrumb > .active {
+    color: #fff;
+    
+}

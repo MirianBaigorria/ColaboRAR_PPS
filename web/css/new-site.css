@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    
+    --sub-h1-color: rgb(54, 54, 54);
+    --sub-h2-color: rgb(99, 99, 99);
+    --sub-text-color: rgb(112, 112, 112);
+   
+  }
+.site-index{
+    font-family: "Poppins", sans-serif;
+    margin-top: 20px;
+    width: 1200px;
+}
+.site-hero{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+
+}
+.hero-img img{
+    width: 550px;
+}
+
+.hero-text h1{
+    font-size: 50px;
+    font-weight: 600;
+    color: var(--sub-h1-color);
+    margin-bottom: -11px;
+}
+.hero-text h2{
+    width: 610px;
+    font-size: 41px;
+    color: var(--sub-h2-color);
+}
+
+.hero-text p{
+    font-size: 16px;
+    color: var(--sub-text-color); 
+    padding-top: 10px;
+    width: 550px;
+}
+.hero-buttons{
+    margin-top: 40px;
+    display: flex;
+    gap: 10px;
+}
+
+
+.button-g{
+    border: 1px solid #38928D;
+    background: #fff;
+    padding: 20px 50px 20px 50px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #38928D;
+    font-size: 16px;
+    font-weight: 600;
+    
+}
+.button-g2{
+    background-color: #2d2d2d;
+    padding: 20px 50px 20px 50px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    
+}
+
+.button-g:hover{
+    text-decoration: none;
+    color: #171818;
+    border: 1px solid #171818;
+}
+
+.button-g2:hover{
+    background-color: #38928D;
+    color: #fff;
+    text-decoration: none;
+    
+}
+.site-aviso p{
+    text-align: justify;
+}
+
+.site-aviso{
+    padding: 40px;
+    margin-top: 10px;
+    border-radius: 10px;
+    color: #dfe4e5;
+    background-color: #002432;
+}
+
+.hero-create{
+    margin-top: 30px;
+}
+
+/*asignaturas/index lado profesor*/
+.btns-tareas-index{
+      margin-top: 30px !important;
+    margin-bottom: 30px !important;
+}
