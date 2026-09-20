@@ -4,6 +4,21 @@ use yii\helpers\Html;
 /* @var $esProfesor boolean */
 // $chat es un array que puede tener 0 o 1 elemento (la última sentencia)
 // puntaje, rangoNombre, esProfesor, esgamificado
+use yii\helpers\Url;
+//para el avatar
+$baseUrl = Yii::$app->request->baseUrl;
+//para mostrar el avatar
+$renderAvatar = function($fotoPerfil) {
+    if (!empty($fotoPerfil)) {
+        // Quitamos "uploads/" si ya viene guardado en la base de datos
+        $nombreLimpio = ltrim(str_replace(['uploads/', 'uploads\\'], '', $fotoPerfil), '/');
+       
+        $src = Url::base(true) . '/uploads/' . rawurlencode($nombreLimpio);
+        return '<img src="' . $src . '" alt="Foto" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; margin-right: 6px; vertical-align: middle; display: inline-block;" onerror="this.onerror=null; this.replaceWith(\'👤 \');">';
+    }
+    return '<span style="margin-right: 6px; font-size: 18px; vertical-align: middle;">👤</span>';
+};
+
 
 if (!empty($chat)) {
     $sentencia = $chat[0];
@@ -74,7 +89,8 @@ if (!empty($chat)) {
         <!-- MENSAJE NORMAL -->
         <div>
             <b>
-                👤💬 <?= Html::encode($sentencia["username"]); ?>
+                <!--linea modificada para mostar el avatar -->
+                <?= $renderAvatar($sentencia["foto_perfil"] ?? null) ?>💭 <?= Html::encode($sentencia["username"]); ?>
                 <?php if ($esgamificado == 'si'): ?>
                     🎯 Puntaje: <?= Html::encode($puntaje); ?>
                     <?php if (!empty($rangoNombre)): ?>

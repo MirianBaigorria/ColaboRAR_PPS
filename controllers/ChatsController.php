@@ -355,6 +355,7 @@ class ChatsController extends Controller {
             's.tipo_respuesta',
             's.evento_id',
             'u.username',
+            'u.foto_perfil AS foto_perfil',
             'IFNULL(tup.puntaje, 0) AS puntaje',
             'IFNULL(r.nombre, "Sin Rango") AS rango_nombre',
             // Nuevo: puntaje otorgado por profesor en preguntas/debates
@@ -417,6 +418,7 @@ public function actionRecuperarUltimaSentenciaChat($chatid)
             's.tipo_respuesta',
             's.evento_id',
             'u.username',
+            'u.foto_perfil AS foto_perfil',
             'IFNULL(tup.puntaje, 0) AS puntaje',
             'IFNULL(r.nombre, "Sin Rango") AS rango_nombre',
               'e.pregunta AS evento_pregunta',
