@@ -162,7 +162,7 @@ class TareasController extends Controller {
 
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            // R3: notificar la creación de la actividad con su fecha de finalización
+            // Notifico a los alumnos y docentes que se creó la actividad (con su fecha de finalización)
             \app\models\Notificaciones::notificarActividad($model, 'tarea_creada');
             $grupos = \app\models\GruposFormados::getDetalleGrupos($model->grupos_id);
             $titulo = "";
@@ -196,7 +196,7 @@ class TareasController extends Controller {
 
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            // R3: notificar la creación de la actividad con su fecha de finalización
+            // Notifico a los alumnos y docentes que se creó la actividad (con su fecha de finalización)
             \app\models\Notificaciones::notificarActividad($model, 'tarea_creada');
             $grupos = \app\models\GruposFormados::getDetalleGrupos($model->grupos_id);
             $titulo = "";
@@ -260,7 +260,7 @@ class TareasController extends Controller {
     }
 
     /**
-     * Cierra o reabre una actividad (R3) y notifica a alumnos y docentes.
+     * Cierra o reabre una actividad y notifica a alumnos y docentes.
      * @param integer $id
      * @return mixed
      */
@@ -386,7 +386,7 @@ class TareasController extends Controller {
     }
 
     if ($model->load(Yii::$app->request->post()) && $model->save()){
-        // R3: notificar la creación de la actividad con su fecha de finalización
+        // Notifico a los alumnos y docentes que se creó la actividad (con su fecha de finalización)
         \app\models\Notificaciones::notificarActividad($model, 'tarea_creada');
         //Guardar los datos enviados por post pero que no pertenecen al model
         //$post = Yii::$app->request->post();

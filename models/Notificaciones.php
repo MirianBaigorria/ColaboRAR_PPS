@@ -146,7 +146,7 @@ class Notificaciones extends \yii\db\ActiveRecord
     }
 
     /**
-     * R1: notifica a los integrantes del grupo (y a los docentes de la
+     * Notifica a los integrantes del grupo (y a los docentes de la
      * asignatura, marcando el grupo para el badge) cada nuevo mensaje.
      */
     public static function notificarNuevoMensaje($model, $chat)
@@ -178,7 +178,7 @@ class Notificaciones extends \yii\db\ActiveRecord
     }
 
     /**
-     * R3: notifica creación, cierre o reapertura de una actividad.
+     * Notifica la creación, el cierre o la reapertura de una actividad.
      */
     public static function notificarActividad($tarea, $tipo)
     {
@@ -215,7 +215,7 @@ class Notificaciones extends \yii\db\ActiveRecord
     }
 
     /**
-     * R4: notifica plazos por vencer (faltan 2 días) o vencidos de una
+     * Notifica los plazos por vencer (faltan 2 días) o vencidos de una
      * actividad. El plazo vencido se notifica como actividad cerrada.
      * No repite la alerta si ya existe una sin leer del mismo tipo y actividad.
      */

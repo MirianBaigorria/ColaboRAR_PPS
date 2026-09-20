@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?php // R3: el docente puede cerrar o reabrir la actividad manualmente ?>
+        <?php // Botón para que el docente cierre o reabra la actividad manualmente ?>
         <?php if ($model->cerrada): ?>
             <?= Html::a('Reabrir actividad', ['cambiar-estado-tarea', 'id' => $model->id], [
                 'class' => 'btn btn-success',
@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $chatsxGrupo = app\models\Chats::getChatsGrupos($model->id);
     $grupos = app\models\GruposFormados::getDetalleGrupos($model->grupos_id);
-    // R2: se obtienen las notificaciones sin leer del usuario actual (docente)
+    // Cuento las notificaciones sin leer del usuario actual (docente)
     // agrupadas por grupo para esta actividad. El método devuelve un arreglo
     // del tipo [grupos_formados_id => cantidad], consultando la tabla notificaciones
     // (tipo 'mensaje', estado sin leer, con grupo cargado y de esta actividad).
@@ -184,7 +184,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="grupo-card">
                 <h3 class="grupo-title">Grupo <?= Html::encode($alumno["grupos_formados_id"]) ?>
                     <?php // Si el grupo tiene interacciones nuevas sin leer se muestra
-                    // un badge naranja con la cantidad junto al título del grupo (R2). ?>
+                    // un badge naranja con la cantidad junto al título del grupo. ?>
                     <?php if ($cantidadNoLeidas > 0): ?>
                         <span class="badge badge-grupo" title="Nuevas interacciones sin leer"><?= $cantidadNoLeidas ?> nuevas</span>
                     <?php endif; ?>
