@@ -34,13 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'creado_en',
             [
-                'attribute' => 'leido',
-                'value' => $model->leido ? 'Sí' : 'No',
-            ],
-            [
                 'label' => 'Actividad',
                 'value' => $model->tareas ? Html::a(Html::encode($model->tareas->nombre_t), ['tareas/view', 'id' => $model->tareas_id]) : null,
                 'format' => 'raw',
+            ],
+            [
+                'label' => 'Grupo',
+                'value' => $model->gruposFormados ? Html::encode($model->gruposFormados->nombre) : null,
             ],
         ],
     ]) ?>

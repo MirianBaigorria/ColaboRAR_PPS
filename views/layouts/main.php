@@ -92,12 +92,15 @@ AppAsset::register($this);
                     ['label' => 'Login', 'url' => ['/site/login']]
                 ];
             }
+            //contador de la campanita de notificaciones, solo a los usuarios logueados le muestra la campanita
             if (!Yii::$app->user->isGuest) {
                 $noLeidas = \app\models\Notificaciones::contarNoLeidas(Yii::$app->user->identity->id);
                 $opciones[] = [
-                    'label' => 'Notificaciones' . ($noLeidas > 0 ? ' <span class="badge">' . $noLeidas . '</span>' : ''),
+                    'label' => '<span class="glyphicon glyphicon-bell" style="color:#ff5252;"></span>'
+                        . ($noLeidas > 0 ? ' <span class="badge" style="background:#d9534f;">' . $noLeidas . '</span>' : ''),
                     'url' => ['/notificaciones/index'],
-                    'encodeLabels' => false,
+                    'encode' => false,
+                    'linkOptions' => ['title' => 'Notificaciones'],
                 ];
             }
             $opciones[] =  (isset(Yii::$app->user->identity->id)) ? '<li>'

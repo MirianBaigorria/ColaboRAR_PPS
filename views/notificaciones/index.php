@@ -1,17 +1,20 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use yii\helpers\StringHelper;
+use yii\widgets\LinkPager;
 use app\models\Notificaciones;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\NotificacionesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Mis Notificaciones';
 $this->params['breadcrumbs'][] = $this->title;
 
 $noLeidas = Notificaciones::contarNoLeidas(Yii::$app->user->id);
+
+$models = $dataProvider->getModels();
+$pagination = $dataProvider->getPagination();
 ?>
 <div class="notificaciones-index">
 
@@ -29,67 +32,40 @@ $noLeidas = Notificaciones::contarNoLeidas(Yii::$app->user->id);
         <?php endif; ?>
     </p>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'rowOptions' => function ($model) {
-            return $model->leido ? ['class' => 'success'] : ['style' => 'font-weight: bold;'];
-        },
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute' => 'titulo',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    return Html::a(Html::encode($model->titulo), ['ver', 'id' => $model->id]);
-                },
-            ],
-            [
-                'attribute' => 'tipo',
-                'value' => function ($model) {
-                    return Notificaciones::getEtiquetaTipo($model->tipo);
-                },
-                'filter' => Notificaciones::getEtiquetasTipo(),
-            ],
-            [
-                'attribute' => 'descripcion',
-                'format' => 'ntext',
-            ],
-            'creado_en',
-            [
-                'attribute' => 'leido',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    return $model->leido
-                        ? '<span class="label label-success">Leída</span>'
-                        : '<span class="label label-warning">Nueva</span>';
-                },
-            ],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{ver} {view} {marcar-leida}',
-                'buttons' => [
-                    'ver' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-new-window"></span>', ['ver', 'id' => $model->id], [
-                            'title' => 'Abrir',
-                        ]);
-                    },
-                    'view' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $model->id], [
-                            'title' => 'Ver',
-                        ]);
-                    },
-                    'marcar-leida' => function ($url, $model) {
-                        if ($model->leido) {
-                            return '';
-                        }
-                        return Html::a('<span class="glyphicon glyphicon-ok"></span>', ['marcar-leida', 'id' => $model->id], [
-                            'title' => 'Marcar como leída',
-                            'data' => ['method' => 'post'],
-                        ]);
-                    },
-                ],
-            ],
-        ],
-    ]); ?>
+    <?php if (empty($models)): ?>
+        <p class="text-muted">No tenés notificaciones.</p>
+    <?php endif; ?>
+
+    <ul class="list-group">
+        <?php foreach ($models as $model): ?>
+            <li class="list-group-item <?= $model->leido ? '' : 'list-group-item-danger' ?>">
+                <div>
+                    <?= Html::a(
+                        Html::encode($model->titulo),
+                        ['ver', 'id' => $model->id],
+                        ['style' => 'font-weight:' . ($model->leido ? 'normal' : 'bold') . ';']
+                    ) ?>
+                    <?php if ($model->descripcion): ?>
+                        <div class="text-muted">
+                            <?= Html::encode(StringHelper::truncate($model->descripcion, 120)) ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="clearfix">
+                    <small class="text-muted"><?= Html::encode($model->creado_en) ?></small>
+                    <span class="pull-right">
+                        <span class="label label-info"><?= Html::encode(Notificaciones::getEtiquetaTipo($model->tipo)) ?></span>
+                        <?php if (!$model->leido): ?>
+                            <?= Html::a('Marcar leída', ['marcar-leida', 'id' => $model->id], [
+                                'class' => 'btn btn-link btn-xs',
+                                'data' => ['method' => 'post'],
+                            ]) ?>
+                        <?php endif; ?>
+                    </span>
+                </div>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+
+    <?= LinkPager::widget(['pagination' => $pagination]) ?>
 </div>

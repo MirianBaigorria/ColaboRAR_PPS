@@ -26,6 +26,8 @@ use yii\helpers\Url;
  */
 class Notificaciones extends \yii\db\ActiveRecord
 {
+    const DIAS_AVISO_PLAZO = 2;
+
     /**
      * @inheritdoc
      */
@@ -151,6 +153,12 @@ class Notificaciones extends \yii\db\ActiveRecord
     {
         $url = Url::to(['chats/grupo', 'chatid' => $chat->id]);
 
+        $tarea = Tareas::findOne($chat->tareas_id);
+        $grupo = GruposFormados::findOne($chat->grupos_formados_id);
+        $nombreGrupo = $grupo ? $grupo->nombre : 'grupo';
+        $nombreTarea = $tarea ? $tarea->nombre_t : 'tarea';
+        $titulo = 'Tienes un nuevo mensaje en el grupo "' . $nombreGrupo . '" de la tarea "' . $nombreTarea . '"';
+
         $miembros = (new \yii\db\Query())
             ->select('usuarios_id')
             ->from('grupos_alumnos')
@@ -159,13 +167,12 @@ class Notificaciones extends \yii\db\ActiveRecord
             ->column();
 
         foreach ($miembros as $usuarioId) {
-            self::crear($usuarioId, 'mensaje', 'Nuevo mensaje en el grupo', $model->sentencia, $url, $chat->grupos_formados_id, $chat->tareas_id);
+            self::crear($usuarioId, 'mensaje', $titulo, $model->sentencia, $url, $chat->grupos_formados_id, $chat->tareas_id);
         }
 
-        $tarea = Tareas::findOne($chat->tareas_id);
         if ($tarea) {
             foreach (self::getDocentesDeTarea($tarea) as $usuarioId) {
-                self::crear($usuarioId, 'mensaje', 'Nueva interacción en grupo', $model->sentencia, $url, $chat->grupos_formados_id, $chat->tareas_id);
+                self::crear($usuarioId, 'mensaje', $titulo, $model->sentencia, $url, $chat->grupos_formados_id, $chat->tareas_id);
             }
         }
     }
@@ -182,7 +189,9 @@ class Notificaciones extends \yii\db\ActiveRecord
                 $descripcion = $tarea->fecha_fin
                     ? 'Fecha de finalización: ' . Yii::$app->formatter->asDate($tarea->fecha_fin)
                     : 'Actividad disponible para realizar.';
-                foreach (self::getAlumnosDeTarea($tarea) as $usuarioId) {
+                // Al docente le interesa saber cuando se abre una tarea
+                $destinatarios = array_unique(array_merge(self::getDocentesDeTarea($tarea), self::getAlumnosDeTarea($tarea)));
+                foreach ($destinatarios as $usuarioId) {
                     self::crear($usuarioId, 'tarea_creada', 'Nueva actividad: ' . $tarea->nombre_t, $descripcion, $url, null, $tarea->id);
                 }
                 break;
@@ -193,6 +202,12 @@ class Notificaciones extends \yii\db\ActiveRecord
                 $titulo .= $tarea->nombre_t;
                 $destinatarios = array_unique(array_merge(self::getDocentesDeTarea($tarea), self::getAlumnosDeTarea($tarea)));
                 foreach ($destinatarios as $usuarioId) {
+                    $yaExiste = self::find()
+                        ->where(['usuarios_id' => $usuarioId, 'tipo' => $tipo, 'tareas_id' => $tarea->id, 'leido' => 0])
+                        ->exists();
+                    if ($yaExiste) {
+                        continue;
+                    }
                     self::crear($usuarioId, $tipo, $titulo, null, $url, null, $tarea->id);
                 }
                 break;
@@ -200,19 +215,27 @@ class Notificaciones extends \yii\db\ActiveRecord
     }
 
     /**
-     * R4: notifica plazos por vencer o vencidos de una actividad.
+     * R4: notifica plazos por vencer (faltan 2 días) o vencidos de una
+     * actividad. El plazo vencido se notifica como actividad cerrada.
      * No repite la alerta si ya existe una sin leer del mismo tipo y actividad.
      */
     public static function notificarPlazo($tarea, $modo)
     {
-        $tipo = $modo === 'por_vencer' ? 'plazo_por_vencer' : 'plazo_vencida';
         $fecha = $tarea->fecha_fin ? Yii::$app->formatter->asDate($tarea->fecha_fin) : 'sin fecha definida';
-        $titulo = $modo === 'por_vencer'
-            ? 'La actividad "' . $tarea->nombre_t . '" vence pronto (hasta el ' . $fecha . ')'
-            : 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
+
+        if ($modo === 'por_vencer') {
+            $tipo = 'plazo_por_vencer';
+            $titulo = 'La actividad "' . $tarea->nombre_t . '" vence en ' . self::DIAS_AVISO_PLAZO . ' días (hasta el ' . $fecha . ')';
+        } else {
+            $tipo = 'tarea_cerrada';
+            $titulo = 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
+        }
+
         $url = Url::to(['tareas/view', 'id' => $tarea->id]);
 
-        $destinatarios = array_unique(array_merge(self::getDocentesDeTarea($tarea), self::getAlumnosDeTarea($tarea)));
+        // Los plazos solo se notifican a los alumnos: al docente solo le
+        // interesan la actividad en los grupos, la apertura y el cierre.
+        $destinatarios = self::getAlumnosDeTarea($tarea);
         foreach ($destinatarios as $usuarioId) {
             $yaExiste = self::find()
                 ->where(['usuarios_id' => $usuarioId, 'tipo' => $tipo, 'tareas_id' => $tarea->id, 'leido' => 0])
@@ -231,11 +254,10 @@ class Notificaciones extends \yii\db\ActiveRecord
     {
         return [
             'mensaje' => 'Nuevo mensaje',
-            'tarea_creada' => 'Actividad creada',
+            'tarea_creada' => 'Nueva actividad',
             'tarea_cerrada' => 'Actividad cerrada',
             'tarea_reabierta' => 'Actividad reabierta',
             'plazo_por_vencer' => 'Plazo por vencer',
-            'plazo_vencida' => 'Plazo vencido',
         ];
     }
 
