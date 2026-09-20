@@ -36,9 +36,11 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
         <?php // Botón para que el docente cierre o reabra la actividad manualmente ?>
         <?php if ($model->cerrada): ?>
-            <?= Html::a('Reabrir actividad', ['cambiar-estado-tarea', 'id' => $model->id], [
+            <?php // Si la actividad ya venció, la reapertura exige establecer una nueva fecha de finalización ?>
+            <?php $vencida = $model->fecha_fin && strtotime($model->fecha_fin) < strtotime(date('Y-m-d')); ?>
+            <?= Html::a('Reabrir actividad', $vencida ? ['reabrir', 'id' => $model->id] : ['cambiar-estado-tarea', 'id' => $model->id], [
                 'class' => 'btn btn-success',
-                'data' => ['method' => 'post'],
+                'data' => $vencida ? [] : ['method' => 'post'],
             ]) ?>
         <?php else: ?>
             <?= Html::a('Cerrar actividad', ['cambiar-estado-tarea', 'id' => $model->id], [

@@ -29,15 +29,15 @@ class TareasController extends Controller {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'update', 'delete', 'create', 'cambiar-estado-tarea'],
+                'only' => ['index', 'view', 'update', 'delete', 'create', 'cambiar-estado-tarea', 'reabrir'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'update', 'create', 'delete', 'cambiar-estado-tarea'],
+                        'actions' => ['index', 'view', 'update', 'create', 'delete', 'cambiar-estado-tarea', 'reabrir'],
                         'allow' => true,
                         'roles' => ['profesor'],
                     ],
                     [
-                        'actions' => ['index', 'view', 'update', 'delete', 'create', 'cambiar-estado-tarea'],
+                        'actions' => ['index', 'view', 'update', 'delete', 'create', 'cambiar-estado-tarea', 'reabrir'],
                         'allow' => true,
                         'roles' => ['administrador'],
                     ],
@@ -48,6 +48,7 @@ class TareasController extends Controller {
                 'actions' => [
                     'delete' => ['POST'],
                     'cambiar-estado-tarea' => ['POST'],
+                    'reabrir' => ['GET', 'POST'],
                 ],
             ],
         ];
@@ -274,6 +275,36 @@ class TareasController extends Controller {
         }
 
         return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    /**
+     * Reabre una actividad vencida estableciendo una nueva fecha de finalización.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionReabrir($id) {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            // La nueva fecha de finalización debe ser hoy o una fecha futura
+            if (!$model->fecha_fin || $model->fecha_fin < date('Y-m-d')) {
+                Yii::$app->session->setFlash('error', 'Debe indicar una nueva fecha de finalización igual o posterior a la fecha actual.');
+                return $this->redirect(['reabrir', 'id' => $model->id]);
+            }
+            $model->cerrada = 0;
+            // Notifico la reapertura de la actividad con su nueva fecha de finalización
+            if ($model->save(false)) {
+                \app\models\Notificaciones::notificarActividad($model, 'tarea_reabierta');
+            }
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        // Limpio la fecha anterior para que el docente cargue el nuevo plazo
+        $model->fecha_fin = null;
+
+        return $this->render('reabrir', [
+            'model' => $model,
+        ]);
     }
 
     /**

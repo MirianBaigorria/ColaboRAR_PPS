@@ -200,6 +200,10 @@ class Notificaciones extends \yii\db\ActiveRecord
             case 'tarea_reabierta':
                 $titulo = $tipo === 'tarea_cerrada' ? 'Actividad cerrada: ' : 'Actividad reabierta: ';
                 $titulo .= $tarea->nombre_t;
+                if ($tipo === 'tarea_reabierta' && $tarea->fecha_fin) {
+                    // Si la actividad se reabrió con un nuevo plazo, lo incluyo en el aviso
+                    $titulo .= ' (nueva fecha de finalización: ' . Yii::$app->formatter->asDate($tarea->fecha_fin) . ')';
+                }
                 $destinatarios = array_unique(array_merge(self::getDocentesDeTarea($tarea), self::getAlumnosDeTarea($tarea)));
                 foreach ($destinatarios as $usuarioId) {
                     $yaExiste = self::find()
