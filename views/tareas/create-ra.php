@@ -39,9 +39,12 @@ $this->registerJsFile('https://unpkg.com/sweetalert/dist/sweetalert.min.js', ['p
     <?= $form->field($model, 'usar_sentencias_apertura')->radioList(['1' => 'Sí', '0' => 'No'], ['value' => '0']) ?>
 
     <?= $form->field($model, 'reportar_estado_animo')->radioList(['1' => 'Sí', '0' => 'No'], ['value' => '0']) ?>
-
-    <?= $form->field($model, 'reportar_conflicto')->radioList(['1' => 'Sí', '0' => 'No'], ['value' => '0']) ?>
+<?= $form->field($model, 'reportar_conflicto')->radioList(['1' => 'Sí', '0' => 'No'], ['value' => '0']) ?>
     
+    <?= $form->field($model, 'fecha_inicio')->input('date') ?>
+
+    <?= $form->field($model, 'fecha_fin')->input('date') ?>
+
 
     <div id="ra-modo-container" style="margin-top: 20px">
         <?= $form->field($model, 'modo_ra')->radioList(['1' => 'Manual', '0' => 'Aleatorio'],['value' => '0']) ?>

@@ -34,6 +34,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?php // R3: el docente puede cerrar o reabrir la actividad manualmente ?>
+        <?php if ($model->cerrada): ?>
+            <?= Html::a('Reabrir actividad', ['cambiar-estado-tarea', 'id' => $model->id], [
+                'class' => 'btn btn-success',
+                'data' => ['method' => 'post'],
+            ]) ?>
+        <?php else: ?>
+            <?= Html::a('Cerrar actividad', ['cambiar-estado-tarea', 'id' => $model->id], [
+                'class' => 'btn btn-warning',
+                'data' => [
+                    'confirm' => 'Esta seguro que desea cerrar esta actividad?',
+                    'method' => 'post',
+                ],
+            ]) ?>
+        <?php endif; ?>
     </p>
 
     <?= DetailView::widget([
@@ -77,6 +92,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'puntaje_tarea',
             'tipo_tarea',
+            'fecha_inicio',
+            'fecha_fin',
+            [
+                'attribute' => 'cerrada',
+                'label' => 'Estado',
+                'value' => function ($data) {
+                    return $data->cerrada ? 'Cerrada' : 'Abierta';
+                },
+            ],
         ],
     ]) ?>
 

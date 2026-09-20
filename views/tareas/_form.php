@@ -27,7 +27,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'reportar_conflicto')->radioList(['1' => 'Sí', '0' => 'No'], ['value' => '0']) ?>
 
-   
+    <?= $form->field($model, 'fecha_inicio')->input('date') ?>
+
+    <?= $form->field($model, 'fecha_fin')->input('date') ?>
 
     <?= $form->field($model, 'grupos_id')->dropDownList(app\models\Grupos::getListaGrupos($asigid)) ?>
 

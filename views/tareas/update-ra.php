@@ -34,6 +34,10 @@ $this->registerJsFile('https://unpkg.com/sweetalert/dist/sweetalert.min.js', ['p
 
     <?= $form->field($model, 'descripcion')->textarea() ?>
 
+    <?= $form->field($model, 'fecha_inicio')->input('date') ?>
+
+    <?= $form->field($model, 'fecha_fin')->input('date') ?>
+
     <?= $form->field($model, 'year')->textInput(['value' => $asignaturaYear, 'readonly' => true]) ?>
 
     <div class="form-group" style="margin-top: 20px;">

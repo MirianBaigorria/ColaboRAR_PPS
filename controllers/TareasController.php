@@ -29,15 +29,15 @@ class TareasController extends Controller {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'update', 'delete', 'create'],
+                'only' => ['index', 'view', 'update', 'delete', 'create', 'cambiar-estado-tarea'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'update', 'create', 'delete'],
+                        'actions' => ['index', 'view', 'update', 'create', 'delete', 'cambiar-estado-tarea'],
                         'allow' => true,
                         'roles' => ['profesor'],
                     ],
                     [
-                        'actions' => ['index', 'view', 'update', 'delete', 'create'],
+                        'actions' => ['index', 'view', 'update', 'delete', 'create', 'cambiar-estado-tarea'],
                         'allow' => true,
                         'roles' => ['administrador'],
                     ],
@@ -47,6 +47,7 @@ class TareasController extends Controller {
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'cambiar-estado-tarea' => ['POST'],
                 ],
             ],
         ];
@@ -161,6 +162,8 @@ class TareasController extends Controller {
 
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            // R3: notificar la creación de la actividad con su fecha de finalización
+            \app\models\Notificaciones::notificarActividad($model, 'tarea_creada');
             $grupos = \app\models\GruposFormados::getDetalleGrupos($model->grupos_id);
             $titulo = "";
 
@@ -193,6 +196,8 @@ class TareasController extends Controller {
 
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            // R3: notificar la creación de la actividad con su fecha de finalización
+            \app\models\Notificaciones::notificarActividad($model, 'tarea_creada');
             $grupos = \app\models\GruposFormados::getDetalleGrupos($model->grupos_id);
             $titulo = "";
 
@@ -252,6 +257,23 @@ class TareasController extends Controller {
                     'asigid'=>$asigid,
 
         ]);
+    }
+
+    /**
+     * Cierra o reabre una actividad (R3) y notifica a alumnos y docentes.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionCambiarEstadoTarea($id) {
+        $model = $this->findModel($id);
+        $model->cerrada = $model->cerrada ? 0 : 1;
+
+        if ($model->save(false)) {
+            $tipo = $model->cerrada ? 'tarea_cerrada' : 'tarea_reabierta';
+            \app\models\Notificaciones::notificarActividad($model, $tipo);
+        }
+
+        return $this->redirect(['view', 'id' => $model->id]);
     }
 
     /**
@@ -364,6 +386,8 @@ class TareasController extends Controller {
     }
 
     if ($model->load(Yii::$app->request->post()) && $model->save()){
+        // R3: notificar la creación de la actividad con su fecha de finalización
+        \app\models\Notificaciones::notificarActividad($model, 'tarea_creada');
         //Guardar los datos enviados por post pero que no pertenecen al model
         //$post = Yii::$app->request->post();
         //Obtener emparejamientos enviados desde el formulario

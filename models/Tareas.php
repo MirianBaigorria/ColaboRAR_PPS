@@ -43,6 +43,8 @@ class Tareas extends \yii\db\ActiveRecord
             [['puntaje_tarea'],'number'],
             [['tipo_tarea'], 'string', 'max'=> 255],
             [['year', 'asignaturas_id', 'grupos_id', 'usar_sentencias_apertura', 'reportar_estado_animo', 'reportar_conflicto', 'actividad_gamificada'], 'integer'],
+            [['fecha_inicio', 'fecha_fin'], 'safe'],
+            [['cerrada'], 'integer'],
             [['nombre_t'], 'string', 'max' => 255],
             [['asignaturas_id'], 'exist', 'skipOnError' => true, 'targetClass' => Asignaturas::className(), 'targetAttribute' => ['asignaturas_id' => 'id']],
             [['grupos_id'], 'exist', 'skipOnError' => true, 'targetClass' => Grupos::className(), 'targetAttribute' => ['grupos_id' => 'id']],
@@ -67,6 +69,9 @@ class Tareas extends \yii\db\ActiveRecord
             'puntaje_tarea'=>'Puntaje de la tarea',
             'tipo_tarea' => 'Tipo de tarea',
             'modo_ra' => 'Modo de asignacion de Recursos Aumentados',
+            'fecha_inicio' => 'Fecha de inicio',
+            'fecha_fin' => 'Fecha de finalización',
+            'cerrada' => 'Estado',
         ];
     }
 

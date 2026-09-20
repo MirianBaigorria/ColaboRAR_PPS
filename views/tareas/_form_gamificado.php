@@ -29,6 +29,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'actividad_gamificada')->radioList(['1' => 'Sí', '0' => 'No'], ['value' => '1']) ?>
 
+    <?= $form->field($model, 'fecha_inicio')->input('date') ?>
+
+    <?= $form->field($model, 'fecha_fin')->input('date') ?>
+
     <div id="puntaje-tarea-container">
         <?= $form->field($model, 'puntaje_tarea')->textInput(['type' => 'number']) ?>
         <p>
