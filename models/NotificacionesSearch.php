@@ -27,7 +27,8 @@ class NotificacionesSearch extends Notificaciones
      */
     public function scenarios()
     {
-        return Model::SCENARIO_DEFAULT;
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
     }
 
     /**
