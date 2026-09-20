@@ -92,6 +92,14 @@ AppAsset::register($this);
                     ['label' => 'Login', 'url' => ['/site/login']]
                 ];
             }
+            if (!Yii::$app->user->isGuest) {
+                $noLeidas = \app\models\Notificaciones::contarNoLeidas(Yii::$app->user->identity->id);
+                $opciones[] = [
+                    'label' => 'Notificaciones' . ($noLeidas > 0 ? ' <span class="badge">' . $noLeidas . '</span>' : ''),
+                    'url' => ['/notificaciones/index'],
+                    'encodeLabels' => false,
+                ];
+            }
             $opciones[] =  (isset(Yii::$app->user->identity->id)) ? '<li>'
             . Html::beginForm(['/site/logout'], 'post')
              . Html::submitButton(
