@@ -83,6 +83,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $chatsxGrupo = app\models\Chats::getChatsGrupos($model->id);
     $grupos = app\models\GruposFormados::getDetalleGrupos($model->grupos_id);
+    // R2: se obtienen las notificaciones sin leer del usuario actual (docente)
+    // agrupadas por grupo para esta actividad. El método devuelve un arreglo
+    // del tipo [grupos_formados_id => cantidad], consultando la tabla notificaciones
+    // (tipo 'mensaje', estado sin leer, con grupo cargado y de esta actividad).
+    $noLeidasPorGrupo = \app\models\Notificaciones::contarNoLeidasPorGrupo($usuario, $model->id);
     ?>
 
     <h2 class="perfil-title">Chats asociados a los grupos <span>.</span></h2>
@@ -141,6 +146,11 @@ $this->params['breadcrumbs'][] = $this->title;
             $varID = Yii::$app->security->encryptByPassword($alumno["grupos_formados_id"], $oUser->password);
             $tareas_id = $model->id;
 
+            // Cantidad de interacciones nuevas sin leer del grupo actual. Si el grupo
+            // no tiene notificaciones pendientes (no está en el arreglo) la cantidad
+            // queda en 0 y no se muestra el badge.
+            $cantidadNoLeidas = isset($noLeidasPorGrupo[$alumno['grupos_formados_id']]) ? $noLeidasPorGrupo[$alumno['grupos_formados_id']] : 0;
+
             // Filtrar los alumnos de acuerdo al grupo actual
             $integrantesDelGrupo = array_filter($grupos, function ($gr) use ($alumno) {
                 return $gr['id'] == $alumno['grupos_formados_id'];
@@ -148,7 +158,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ?>
 
             <div class="grupo-card">
-                <h3 class="grupo-title">Grupo <?= Html::encode($alumno["grupos_formados_id"]) ?></h3>
+                <h3 class="grupo-title">Grupo <?= Html::encode($alumno["grupos_formados_id"]) ?>
+                    <?php // Si el grupo tiene interacciones nuevas sin leer se muestra
+                    // un badge naranja con la cantidad junto al título del grupo (R2). ?>
+                    <?php if ($cantidadNoLeidas > 0): ?>
+                        <span class="badge badge-grupo" title="Nuevas interacciones sin leer"><?= $cantidadNoLeidas ?> nuevas</span>
+                    <?php endif; ?>
+                </h3>
                 <div class="grupo-content">
                     <ul>
                         <?php foreach ($integrantesDelGrupo as $gr): ?>
@@ -326,6 +342,18 @@ $this->registerJs($script);
         font-weight: bold;
         color: #333;
         margin-bottom: 10px;
+    }
+
+    /* estilo del badge de nuevas interacciones sin leer por grupo
+       (fondo naranja #e67e22, texto blanco, borde redondeado) */
+    .badge-grupo {
+        background-color: #e67e22;
+        color: #fff;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 12px;
+        margin-left: 8px;
+        vertical-align: middle;
     }
 
     .grupo-content ul {
