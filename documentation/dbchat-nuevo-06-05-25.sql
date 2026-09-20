@@ -5350,6 +5350,32 @@ CREATE TABLE `multiple_choice` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `notificaciones`
+--
+
+CREATE TABLE `notificaciones` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuarios_id` int(11) NOT NULL,
+  `tipo` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'general',
+  `titulo` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `descripcion` text COLLATE utf8_unicode_ci,
+  `url` varchar(500) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `grupos_formados_id` int(11) DEFAULT NULL,
+  `tareas_id` int(11) DEFAULT NULL,
+  `leido` tinyint(1) NOT NULL DEFAULT '0',
+  `creado_en` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_notif_usuarios` (`usuarios_id`),
+  KEY `idx_notif_tareas` (`tareas_id`),
+  KEY `idx_notif_grupos` (`grupos_formados_id`),
+  CONSTRAINT `fk_notif_usuarios` FOREIGN KEY (`usuarios_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_notif_tareas` FOREIGN KEY (`tareas_id`) REFERENCES `tareas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_notif_grupos` FOREIGN KEY (`grupos_formados_id`) REFERENCES `grupos_formados` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `pais`
 --
 
@@ -16561,7 +16587,10 @@ CREATE TABLE `tareas` (
   `grupos_id` int(11) NOT NULL,
   `puntaje_tarea` int(11) DEFAULT NULL,
   `tipo_tarea` enum('individual','grupal') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `actividad_gamificada` tinyint(1) DEFAULT '0' COMMENT 'Indica si la actividad está gamificada (0: No, 1: Sí)'
+  `actividad_gamificada` tinyint(1) DEFAULT '0' COMMENT 'Indica si la actividad está gamificada (0: No, 1: Sí)',
+  `fecha_inicio` date DEFAULT NULL COMMENT 'Inicio del período de la actividad',
+  `fecha_fin` date DEFAULT NULL COMMENT 'Fin del período de la actividad',
+  `cerrada` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si la actividad está cerrada (0: Abierta, 1: Cerrada)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
