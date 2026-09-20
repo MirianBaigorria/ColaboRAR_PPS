@@ -146,6 +146,11 @@ public function actionCrearConAjax()
     // Guardar la sentencia con los nuevos campos
     $model->save(false);
 
+    // R1: notificar a los integrantes del grupo y a los docentes al registrar un nuevo mensaje
+    if ($chat) {
+        \app\models\Notificaciones::notificarNuevoMensaje($model, $chat);
+    }
+
     // Puedes devolver un JSON si lo usás con AJAX
     return $model->id;
 }
