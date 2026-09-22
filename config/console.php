@@ -16,6 +16,22 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'urlManager' => [
+            'class' => 'yii\web\UrlManager',
+            // Misma config que la web (urlManager comentado en web.php):
+            // sin pretty URL, con index.php, para que las URLs que genera
+            // el cron (ej: plazos) tengan el mismo formato que las de la web.
+            'enablePrettyUrl' => false,
+            'showScriptName' => true,
+            'scriptUrl' => '/index.php',
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            'defaultRoles' => ['guest'],
+        ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+        ],
         'log' => [
             'targets' => [
                 [
