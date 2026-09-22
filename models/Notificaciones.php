@@ -151,8 +151,6 @@ class Notificaciones extends \yii\db\ActiveRecord
      */
     public static function notificarNuevoMensaje($model, $chat)
     {
-        $url = Url::to(['chats/grupo', 'chatid' => $chat->id]);
-
         $tarea = Tareas::findOne($chat->tareas_id);
         $grupo = GruposFormados::findOne($chat->grupos_formados_id);
         $nombreGrupo = $grupo ? $grupo->nombre : 'grupo';
@@ -167,23 +165,39 @@ class Notificaciones extends \yii\db\ActiveRecord
             ->column();
 
         foreach ($miembros as $usuarioId) {
-            self::crear($usuarioId, 'mensaje', $titulo, $model->sentencia, $url, $chat->grupos_formados_id, $chat->tareas_id);
+            self::crear($usuarioId, 'mensaje', $titulo, $model->sentencia, self::generarUrlChat($usuarioId, $chat), $chat->grupos_formados_id, $chat->tareas_id);
         }
 
         if ($tarea) {
             foreach (self::getDocentesDeTarea($tarea) as $usuarioId) {
-                self::crear($usuarioId, 'mensaje', $titulo, $model->sentencia, $url, $chat->grupos_formados_id, $chat->tareas_id);
+                if ((int) $usuarioId === (int) $model->usuarios_id) {
+                    continue; // el que envía el mensaje no recibe su propia notificación
+                }
+                self::crear($usuarioId, 'mensaje', $titulo, $model->sentencia, self::generarUrlChat($usuarioId, $chat), $chat->grupos_formados_id, $chat->tareas_id);
             }
         }
     }
 
     /**
+     * Genera el enlace al chat encriptando el id del chat con la contraseña
+     * del destinatario, tal como lo usa el resto de la aplicacion.
+     */
+    private static function generarUrlChat($usuarioId, $chat)
+    {
+        $usuario = Usuarios::findOne($usuarioId);
+        $idEncriptado = $usuario
+            ? Yii::$app->security->encryptByPassword($chat->id, $usuario->password)
+            : $chat->id;
+        return Url::to(['chats/grupo', 'chatid' => $idEncriptado]);
+    }
+
+    /**
      * Notifica la creación, el cierre o la reapertura de una actividad.
+     * A los docentes los lleva a la ficha de la actividad; a los alumnos,
+     * al chat de su grupo (su forma de ver la actividad).
      */
     public static function notificarActividad($tarea, $tipo)
     {
-        $url = Url::to(['tareas/view', 'id' => $tarea->id]);
-
         switch ($tipo) {
             case 'tarea_creada':
                 $descripcion = $tarea->fecha_fin
@@ -192,7 +206,7 @@ class Notificaciones extends \yii\db\ActiveRecord
                 // Al docente le interesa saber cuando se abre una tarea
                 $destinatarios = array_unique(array_merge(self::getDocentesDeTarea($tarea), self::getAlumnosDeTarea($tarea)));
                 foreach ($destinatarios as $usuarioId) {
-                    self::crear($usuarioId, 'tarea_creada', 'Nueva actividad: ' . $tarea->nombre_t, $descripcion, $url, null, $tarea->id);
+                    self::crear($usuarioId, 'tarea_creada', 'Nueva actividad: ' . $tarea->nombre_t, $descripcion, self::generarUrlActividad($usuarioId, $tarea), null, $tarea->id);
                 }
                 break;
 
@@ -212,7 +226,7 @@ class Notificaciones extends \yii\db\ActiveRecord
                     if ($yaExiste) {
                         continue;
                     }
-                    self::crear($usuarioId, $tipo, $titulo, null, $url, null, $tarea->id);
+                    self::crear($usuarioId, $tipo, $titulo, null, self::generarUrlActividad($usuarioId, $tarea), null, $tarea->id);
                 }
                 break;
         }
@@ -235,8 +249,6 @@ class Notificaciones extends \yii\db\ActiveRecord
             $titulo = 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
         }
 
-        $url = Url::to(['tareas/view', 'id' => $tarea->id]);
-
         // Los plazos solo se notifican a los alumnos: al docente solo le
         // interesan la actividad en los grupos, la apertura y el cierre.
         $destinatarios = self::getAlumnosDeTarea($tarea);
@@ -247,8 +259,53 @@ class Notificaciones extends \yii\db\ActiveRecord
             if ($yaExiste) {
                 continue;
             }
-            self::crear($usuarioId, $tipo, $titulo, null, $url, null, $tarea->id);
+            self::crear($usuarioId, $tipo, $titulo, null, self::generarUrlActividad($usuarioId, $tarea), null, $tarea->id);
         }
+    }
+
+    /**
+     * URL de una actividad según el rol de quien la recibe: para un docente
+     * es la ficha de la actividad; para un alumno, el chat de su grupo
+     * (su acceso a la actividad). Si el alumno todavía no tiene grupo,
+     * lo lleva al listado de actividades de la asignatura.
+     */
+    private static function generarUrlActividad($usuarioId, $tarea)
+    {
+        $usuario = Usuarios::findOne($usuarioId);
+        $roles = $usuario ? Yii::$app->authManager->getRolesByUser($usuarioId) : [];
+        $esDocente = array_key_exists('profesor', $roles) || array_key_exists('administrador', $roles);
+
+        if (!$esDocente) {
+            $chat = self::findChatDelAlumno($tarea, $usuarioId);
+            if ($chat) {
+                return self::generarUrlChat($usuarioId, $chat);
+            }
+            return Url::to([
+                'tareas/tareas-alumnos',
+                'asigid' => Yii::$app->security->encryptByPassword($tarea->asignaturas_id, $usuario->password),
+                'year' => Yii::$app->security->encryptByPassword($tarea->year, $usuario->password),
+            ]);
+        }
+
+        return Url::to(['tareas/view', 'id' => $tarea->id]);
+    }
+
+    /**
+     * Chat del grupo del alumno para una actividad, si ya está formado.
+     */
+    private static function findChatDelAlumno($tarea, $usuarioId)
+    {
+        $chats = Chats::find()->where(['tareas_id' => $tarea->id])->all();
+        foreach ($chats as $chat) {
+            $grupo = GruposAlumnos::findOne([
+                'grupos_formados_id' => $chat->grupos_formados_id,
+                'usuarios_id' => $usuarioId,
+            ]);
+            if ($grupo) {
+                return $chat;
+            }
+        }
+        return null;
     }
 
     /**
