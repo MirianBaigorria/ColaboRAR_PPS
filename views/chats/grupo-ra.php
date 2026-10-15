@@ -354,6 +354,12 @@ $sentenciaApertura = new app\models\SentenciasApertura();
                 style="background-color: #BDE5F8; text-align: center; padding: 5px;" value="Tienes un nuevo evento" />
         </div>
 
+        <?php if ($tarea->cerrada): ?>
+            <?php // Si la actividad esta cerrada no se pueden enviar mensajes ni archivos ?>
+            <div class="alert alert-warning">
+                🔒 Esta actividad está cerrada: no se pueden enviar mensajes ni archivos.
+            </div>
+        <?php else: ?>
         <form id="frmChat">
             <?php if ($tarea->usar_sentencias_apertura == 1): ?>
                 <label><b>Empeza tu aporte con alguna de estas frases:</b></label><br />
@@ -394,6 +400,7 @@ $sentenciaApertura = new app\models\SentenciasApertura();
             </div>
 
         </form>
+        <?php endif; ?>
     </div>
 
 
