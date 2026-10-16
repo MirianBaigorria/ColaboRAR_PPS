@@ -280,7 +280,14 @@ class TareasController extends Controller {
                 $resumen = 'Cerrada por ' . $nombre . ' el ' . date('d/m/Y') . ' a las ' . date('H:i');
                 \app\models\Notificaciones::notificarActividad($model, 'tarea_cerrada', $resumen);
             } else {
-                \app\models\Notificaciones::notificarActividad($model, 'tarea_reabierta');
+                // Armo el resumen de la reapertura con el usuario de la sesion y la fecha y hora actuales
+                $usuario = Yii::$app->user->identity;
+                $nombre = trim($usuario->nombre . ' ' . $usuario->apellido);
+                if ($nombre === '') {
+                    $nombre = $usuario->username;
+                }
+                $resumen = 'Reabierta por ' . $nombre . ' el ' . date('d/m/Y') . ' a las ' . date('H:i');
+                \app\models\Notificaciones::notificarActividad($model, 'tarea_reabierta', $resumen);
             }
         }
 
@@ -304,7 +311,14 @@ class TareasController extends Controller {
             $model->cerrada = 0;
             // Notifico la reapertura de la actividad con su nueva fecha de finalización
             if ($model->save(false)) {
-                \app\models\Notificaciones::notificarActividad($model, 'tarea_reabierta');
+                // Armo el resumen de la reapertura con el usuario de la sesion y la fecha y hora actuales
+                $usuario = Yii::$app->user->identity;
+                $nombre = trim($usuario->nombre . ' ' . $usuario->apellido);
+                if ($nombre === '') {
+                    $nombre = $usuario->username;
+                }
+                $resumen = 'Reabierta por ' . $nombre . ' el ' . date('d/m/Y') . ' a las ' . date('H:i');
+                \app\models\Notificaciones::notificarActividad($model, 'tarea_reabierta', $resumen);
             }
             return $this->redirect(['view', 'id' => $model->id]);
         }
