@@ -195,8 +195,9 @@ class Notificaciones extends \yii\db\ActiveRecord
      * Notifica la creación, el cierre o la reapertura de una actividad.
      * A los docentes los lleva a la ficha de la actividad; a los alumnos,
      * al chat de su grupo (su forma de ver la actividad).
+     * @param string $descripcion Texto de resumen opcional para el cierre o la reapertura
      */
-    public static function notificarActividad($tarea, $tipo)
+    public static function notificarActividad($tarea, $tipo, $descripcion = null)
     {
         switch ($tipo) {
             case 'tarea_creada':
@@ -226,7 +227,7 @@ class Notificaciones extends \yii\db\ActiveRecord
                     if ($yaExiste) {
                         continue;
                     }
-                    self::crear($usuarioId, $tipo, $titulo, null, self::generarUrlActividad($usuarioId, $tarea), null, $tarea->id);
+                    self::crear($usuarioId, $tipo, $titulo, $descripcion, self::generarUrlActividad($usuarioId, $tarea), null, $tarea->id);
                 }
                 break;
         }
