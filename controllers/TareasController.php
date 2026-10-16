@@ -270,8 +270,18 @@ class TareasController extends Controller {
         $model->cerrada = $model->cerrada ? 0 : 1;
 
         if ($model->save(false)) {
-            $tipo = $model->cerrada ? 'tarea_cerrada' : 'tarea_reabierta';
-            \app\models\Notificaciones::notificarActividad($model, $tipo);
+            if ($model->cerrada) {
+                // Armo el resumen del cierre con el usuario de la sesion y la fecha y hora actuales
+                $usuario = Yii::$app->user->identity;
+                $nombre = trim($usuario->nombre . ' ' . $usuario->apellido);
+                if ($nombre === '') {
+                    $nombre = $usuario->username;
+                }
+                $resumen = 'Cerrada por ' . $nombre . ' el ' . date('d/m/Y') . ' a las ' . date('H:i');
+                \app\models\Notificaciones::notificarActividad($model, 'tarea_cerrada', $resumen);
+            } else {
+                \app\models\Notificaciones::notificarActividad($model, 'tarea_reabierta');
+            }
         }
 
         return $this->redirect(['view', 'id' => $model->id]);
