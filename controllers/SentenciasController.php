@@ -112,6 +112,18 @@ public function actionCrearConAjax()
         throw new \yii\web\BadRequestHttpException('Parámetros requeridos ausentes: usuarios_id, chats_id, sentencia');
     }
 
+    // Si la actividad del chat esta cerrada no se permiten nuevos mensajes ni archivos.
+    // Este control es del lado del servidor: evita que se envie por AJAX aunque
+    // los botones esten ocultos en la pantalla.
+    $chatCerrado = \app\models\Chats::findOne($chats_id);
+    if ($chatCerrado && $chatCerrado->tareas_id) {
+        $tareaCerrada = \app\models\Tareas::findOne($chatCerrado->tareas_id);
+        if ($tareaCerrada && $tareaCerrada->cerrada) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['error' => 'La actividad está cerrada; no se pueden enviar mensajes.'];
+        }
+    }
+
     // Instanciar y cargar el modelo
     $model = new \app\models\Sentencias();
     $model->fecha_hora = date('Y-m-d H:i:s');
