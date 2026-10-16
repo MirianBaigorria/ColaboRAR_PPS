@@ -245,9 +245,12 @@ class Notificaciones extends \yii\db\ActiveRecord
         if ($modo === 'por_vencer') {
             $tipo = 'plazo_por_vencer';
             $titulo = 'La actividad "' . $tarea->nombre_t . '" vence en ' . self::DIAS_AVISO_PLAZO . ' días (hasta el ' . $fecha . ')';
+            $descripcion = null;
         } else {
             $tipo = 'tarea_cerrada';
             $titulo = 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
+            // Cierre automatico por vencimiento: no hay una persona responsable
+            $descripcion = 'Cerrada automáticamente al vencer la fecha de finalización (' . $fecha . '). Sin responsable.';
         }
 
         // Los plazos solo se notifican a los alumnos: al docente solo le
@@ -260,7 +263,7 @@ class Notificaciones extends \yii\db\ActiveRecord
             if ($yaExiste) {
                 continue;
             }
-            self::crear($usuarioId, $tipo, $titulo, null, self::generarUrlActividad($usuarioId, $tarea), null, $tarea->id);
+            self::crear($usuarioId, $tipo, $titulo, $descripcion, self::generarUrlActividad($usuarioId, $tarea), null, $tarea->id);
         }
     }
 
