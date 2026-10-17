@@ -19,6 +19,9 @@ use Yii;
  * @property int $asignaturas_id
  * @property int $grupos_id 
  *@property string $tipo_tarea
+ * @property int $cerrada_por
+ * @property string $cerrada_en
+ * @property Usuarios $cerradaPorUsuario
  * @property Chats[] $chats
  * @property Asignaturas $asignaturas
  */
@@ -45,9 +48,12 @@ class Tareas extends \yii\db\ActiveRecord
             [['year', 'asignaturas_id', 'grupos_id', 'usar_sentencias_apertura', 'reportar_estado_animo', 'reportar_conflicto', 'actividad_gamificada'], 'integer'],
             [['fecha_inicio', 'fecha_fin'], 'safe'],
             [['cerrada'], 'integer'],
+            [['cerrada_en'], 'safe'],
+            [['cerrada_por'], 'integer'],
             [['nombre_t'], 'string', 'max' => 255],
             [['asignaturas_id'], 'exist', 'skipOnError' => true, 'targetClass' => Asignaturas::className(), 'targetAttribute' => ['asignaturas_id' => 'id']],
             [['grupos_id'], 'exist', 'skipOnError' => true, 'targetClass' => Grupos::className(), 'targetAttribute' => ['grupos_id' => 'id']],
+            [['cerrada_por'], 'exist', 'skipOnError' => true, 'targetClass' => Usuarios::className(), 'targetAttribute' => ['cerrada_por' => 'id']],
             [['modo_ra'], 'integer'],
         ];
     }
@@ -72,6 +78,8 @@ class Tareas extends \yii\db\ActiveRecord
             'fecha_inicio' => 'Fecha de inicio',
             'fecha_fin' => 'Fecha de finalización',
             'cerrada' => 'Estado',
+            'cerrada_por' => 'Cerrada por',
+            'cerrada_en' => 'Fecha de cierre',
         ];
     }
 
@@ -89,5 +97,50 @@ class Tareas extends \yii\db\ActiveRecord
     public function getAsignaturas()
     {
         return $this->hasOne(Asignaturas::className(), ['id' => 'asignaturas_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCerradaPorUsuario()
+    {
+        return $this->hasOne(Usuarios::className(), ['id' => 'cerrada_por']);
+    }
+
+    /**
+     * Devuelve el estado de la actividad en texto, indicando quien la cerro y cuando.
+     * @return string
+     */
+    public function getTextoEstado()
+    {
+        if (!$this->cerrada) {
+            return 'Abierta';
+        }
+
+        // Fecha y hora del cierre; si no hay registro, uso la fecha de finalizacion
+        if ($this->cerrada_en) {
+            $cierre = Yii::$app->formatter->asDatetime($this->cerrada_en, 'php:d/m/Y H:i');
+        } elseif ($this->fecha_fin) {
+            $cierre = Yii::$app->formatter->asDate($this->fecha_fin, 'php:d/m/Y');
+        } else {
+            $cierre = null;
+        }
+
+        // Cierre automatico por vencimiento: no hay un usuario responsable
+        if (!$this->cerrada_por) {
+            return 'Cerrada automáticamente' . ($cierre ? ' el ' . $cierre : '');
+        }
+
+        // Cierre manual: muestro el nombre del usuario que la cerro
+        $usuario = $this->cerradaPorUsuario;
+        if ($usuario) {
+            $nombre = trim($usuario->nombre . ' ' . $usuario->apellido);
+            if ($nombre === '') {
+                $nombre = $usuario->username;
+            }
+            return 'Cerrada por ' . $nombre . ($cierre ? ' el ' . $cierre : '');
+        }
+
+        return 'Cerrada';
     }
 }
