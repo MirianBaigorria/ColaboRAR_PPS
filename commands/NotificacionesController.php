@@ -21,6 +21,8 @@ use yii\helpers\Console;
  *  - Si a una actividad abierta le faltan N días (parametro plazo_dias_aviso,
  *    por defecto 2) para su fecha de finalizacion, notifica a los alumnos
  *    que el plazo esta por vencer.
+ *  - El mismo dia de la fecha de finalizacion, avisa solo al docente que la
+ *    actividad vence ese dia y puede requerir acciones al respecto.
  *  - Si la fecha de finalizacion ya paso, cierra la actividad y notifica a
  *    los alumnos el vencimiento (vencida = cerrada).
  */
@@ -55,6 +57,10 @@ class NotificacionesController extends Controller
                     Notificaciones::notificarPlazo($tarea, 'vencida');
                     $this->stdout("Actividad vencida y cerrada: {$tarea->nombre_t}\n", Console::FG_YELLOW);
                 }
+            } elseif ($diasRestantes === 0) {
+                // Vence hoy: aviso solo al docente para que este atento a posibles acciones
+                Notificaciones::notificarPlazo($tarea, 'vence_hoy');
+                $this->stdout("La actividad vence hoy (aviso al docente): {$tarea->nombre_t}\n", Console::FG_CYAN);
             } elseif ($diasRestantes === $diasAviso) {
                 // Faltan exactamente $diasAviso dias: aviso del vencimiento a los alumnos
                 Notificaciones::notificarPlazo($tarea, 'por_vencer');

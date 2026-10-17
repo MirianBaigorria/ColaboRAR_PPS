@@ -234,8 +234,10 @@ class Notificaciones extends \yii\db\ActiveRecord
     }
 
     /**
-     * Notifica los plazos por vencer (faltan 2 días) o vencidos de una
-     * actividad. El plazo vencido se notifica como actividad cerrada.
+     * Notifica los plazos de una actividad:
+     *  - por_vencer: faltan 2 días; se avisa a los alumnos.
+     *  - vence_hoy: es el día del vencimiento; se avisa solo al docente.
+     *  - vencida: ya pasó la fecha; se notifica como cerrada a los alumnos.
      * No repite la alerta si ya existe una sin leer del mismo tipo y actividad.
      */
     public static function notificarPlazo($tarea, $modo)
@@ -246,16 +248,23 @@ class Notificaciones extends \yii\db\ActiveRecord
             $tipo = 'plazo_por_vencer';
             $titulo = 'La actividad "' . $tarea->nombre_t . '" vence en ' . self::DIAS_AVISO_PLAZO . ' días (hasta el ' . $fecha . ')';
             $descripcion = null;
+            // El aviso de plazo por vencer es para los alumnos
+            $destinatarios = self::getAlumnosDeTarea($tarea);
+        } elseif ($modo === 'vence_hoy') {
+            $tipo = 'plazo_vence_hoy';
+            $titulo = 'La actividad "' . $tarea->nombre_t . '" vence HOY (' . $fecha . ')';
+            $descripcion = 'La actividad vence hoy. Revisá si requiere alguna acción (cerrarla, reabrirla o hacer seguimiento).';
+            // El día del vencimiento se avisa solo al docente, para que esté atento
+            $destinatarios = self::getDocentesDeTarea($tarea);
         } else {
             $tipo = 'tarea_cerrada';
             $titulo = 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
             // Cierre automatico por vencimiento: no hay una persona responsable
             $descripcion = 'Cerrada automáticamente al vencer la fecha de finalización (' . $fecha . '). Sin responsable.';
+            // El vencimiento se notifica a los alumnos
+            $destinatarios = self::getAlumnosDeTarea($tarea);
         }
 
-        // Los plazos solo se notifican a los alumnos: al docente solo le
-        // interesan la actividad en los grupos, la apertura y el cierre.
-        $destinatarios = self::getAlumnosDeTarea($tarea);
         foreach ($destinatarios as $usuarioId) {
             $yaExiste = self::find()
                 ->where(['usuarios_id' => $usuarioId, 'tipo' => $tipo, 'tareas_id' => $tarea->id, 'leido' => 0])
@@ -323,6 +332,7 @@ class Notificaciones extends \yii\db\ActiveRecord
             'tarea_cerrada' => 'Actividad cerrada',
             'tarea_reabierta' => 'Actividad reabierta',
             'plazo_por_vencer' => 'Plazo por vencer',
+            'plazo_vence_hoy' => 'Vence hoy',
         ];
     }
 
