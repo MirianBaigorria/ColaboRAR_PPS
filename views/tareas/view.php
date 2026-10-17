@@ -100,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'cerrada',
                 'label' => 'Estado',
                 'value' => function ($data) {
-                    return $data->cerrada ? 'Cerrada' : 'Abierta';
+                    return $data->getTextoEstado();
                 },
             ],
         ],
