@@ -48,6 +48,9 @@ class NotificacionesController extends Controller
             if ($diasRestantes < 0) {
                 // La actividad ya vencio: la cierro automaticamente y notifico a los alumnos
                 $tarea->cerrada = 1;
+                // Cierre automatico: no hay usuario responsable y dejo registro de la fecha
+                $tarea->cerrada_por = null;
+                $tarea->cerrada_en = date('Y-m-d H:i:s');
                 if ($tarea->save(false)) {
                     Notificaciones::notificarPlazo($tarea, 'vencida');
                     $this->stdout("Actividad vencida y cerrada: {$tarea->nombre_t}\n", Console::FG_YELLOW);
