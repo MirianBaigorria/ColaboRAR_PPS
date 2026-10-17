@@ -269,6 +269,15 @@ class TareasController extends Controller {
         $model = $this->findModel($id);
         $model->cerrada = $model->cerrada ? 0 : 1;
 
+        // Guardo en la propia actividad quien la cerro y cuando (o limpio los datos si se reabre)
+        if ($model->cerrada) {
+            $model->cerrada_por = Yii::$app->user->id;
+            $model->cerrada_en = date('Y-m-d H:i:s');
+        } else {
+            $model->cerrada_por = null;
+            $model->cerrada_en = null;
+        }
+
         if ($model->save(false)) {
             if ($model->cerrada) {
                 // Armo el resumen del cierre con el usuario de la sesion y la fecha y hora actuales
@@ -309,6 +318,9 @@ class TareasController extends Controller {
                 return $this->redirect(['reabrir', 'id' => $model->id]);
             }
             $model->cerrada = 0;
+            // Al reabrir limpio los datos del cierre anterior
+            $model->cerrada_por = null;
+            $model->cerrada_en = null;
             // Notifico la reapertura de la actividad con su nueva fecha de finalización
             if ($model->save(false)) {
                 // Armo el resumen de la reapertura con el usuario de la sesion y la fecha y hora actuales
