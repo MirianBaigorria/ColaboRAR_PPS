@@ -6,6 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'language' => 'es', // Set the language here
+    'timeZone' => 'America/Argentina/Buenos_Aires',
     'name' => 'ColaborAR',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
