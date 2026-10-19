@@ -55,11 +55,13 @@ AppAsset::register($this);
                     ['label' => 'Docentes por Asignaturaa', 'url' => ['/asignaturas-docentes/index']],
                     ['label' => 'Sentencias de Apertura', 'url' => ['/sentencias-apertura/index']]];
             } elseif (array_key_exists('profesor', $rolesUsuario)) {
+                $oUser = \app\models\Usuarios::findOne(['id' => Yii::$app->user->identity->id]);
                 $opciones = [
                     //Agrego el label para la identificacion de Cuenta Profesor
                     ['label'=> 'Cuenta Profesor',
                     'url'=> '#',
                     'linkOptions' => ['class' => 'tipocuenta']],
+                    ['label' => 'Editar mi perfil', 'url' => ['/usuarios/actualizar-perfil', 'id' => Yii::$app->security->encryptByPassword(Yii::$app->user->identity->id, $oUser->password)]],
                     ['label' => 'Asignaturas', 'url' => ['/asignaturas/index']],
                     ['label' => 'Alumnos', 'url' => ['/usuarios/index', 't' => 'a']],
                     [

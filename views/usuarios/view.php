@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $oUser = \app\models\Usuarios::findOne(['id' => $usuario]);
         ?>
         <?= (array_key_exists('administrador', $rolesUsuario)) ? Html::a('Promover a Docente', ['promover-docente', 'id' => Yii::$app->security->encryptByPassword($model->id, $oUser->password)], ['class' => 'btn btn-success']) : '' ?>
+        <?= Html::a('Editar mi perfil', ['/usuarios/actualizar-perfil', 'id' => Yii::$app->security->encryptByPassword($model->id, $oUser->password)], ['class' => 'btn btn-info']) ?>
     </p>
 
     <?=
