@@ -221,6 +221,13 @@ class UsuariosController extends Controller {
     
         // Buscar el modelo del usuario a actualizar
         $model = $this->findModel($idUsuario);
+
+        // Los docentes pueden no tener cargados dni, institucion, pregunta y respuesta,
+        // por lo que en la edicion de su perfil esos campos no son obligatorios.
+        $rolesUsuario = Yii::$app->authManager->getRolesByUser($usuario);
+        if (array_key_exists('profesor', $rolesUsuario)) {
+            $model->scenario = 'editarPerfilDocente';
+        }
     
         // Guardar la imagen antigua antes de cargar nuevos datos
         $oldFotoPerfil = $model->foto_perfil;

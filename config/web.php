@@ -22,6 +22,13 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        // Las fechas se guardan en hora local (America/Argentina/Buenos_Aires).
+        // Se evita que el formateador las convierta desde UTC, lo que corria un dia
+        // la fecha de nacimiento al mostrarla/guardarla.
+        'formatter' => [
+            'defaultTimeZone' => 'America/Argentina/Buenos_Aires',
+            'timeZone' => 'America/Argentina/Buenos_Aires',
+        ],
         'user' => [
             'identityClass' => 'app\models\Usuarios',
             'enableAutoLogin' => true,

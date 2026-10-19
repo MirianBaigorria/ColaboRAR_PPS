@@ -136,7 +136,8 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      */
     public function rules() {
         return [
-            [['username', 'password','pais_idpais','fechanacimiento', 'email', 'nombre', 'apellido', 'dni', 'pregunta', 'respuesta', 'institucion'], 'required'],
+            [['username', 'password','pais_idpais','fechanacimiento', 'email', 'nombre', 'apellido'], 'required'],
+            [['dni', 'pregunta', 'respuesta', 'institucion'], 'required', 'except' => ['editarPerfilDocente']],
             [['tipo'], 'integer'],
             [['username'], 'string', 'max' => 45], 
             ['username', 'unique', 'targetClass' => '\app\models\Usuarios', 'message' => 'Este nombre de usuario, ya existe.'],
