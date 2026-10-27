@@ -42,8 +42,8 @@ class NotificacionesSearch extends Notificaciones
     {
         $query = Notificaciones::find();
 
-        // Mostrar solo las notificaciones de los últimos 10 días
-        $query->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-10 days'))]);
+        // Mostrar solo las notificaciones de los últimos 6 días
+        $query->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-6 days'))]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

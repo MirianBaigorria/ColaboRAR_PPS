@@ -117,13 +117,13 @@ class Notificaciones extends \yii\db\ActiveRecord
     }
 
     /**
-     * Cantidad de notificaciones sin leer de un usuario (últimos 10 días).
+     * Cantidad de notificaciones sin leer de un usuario (últimos 6 días).
      */
     public static function contarNoLeidas($usuariosId)
     {
         return (int) self::find()
             ->where(['usuarios_id' => $usuariosId, 'leido' => 0])
-            ->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-10 days'))])
+            ->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-6 days'))])
             ->count();
     }
 
@@ -136,7 +136,7 @@ class Notificaciones extends \yii\db\ActiveRecord
         $rows = self::find()
             ->select(['grupos_formados_id', 'COUNT(*) AS total'])
             ->where(['usuarios_id' => $usuariosId, 'leido' => 0, 'tareas_id' => $tareasId])
-            ->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-10 days'))])
+            ->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-6 days'))])
             ->andWhere(['not', ['grupos_formados_id' => null]])
             ->groupBy('grupos_formados_id')
             ->asArray()
