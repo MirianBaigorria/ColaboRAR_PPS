@@ -40,15 +40,18 @@ class NotificacionesSearch extends Notificaciones
      */
     public function search($params)
     {
-        $query = Notificaciones::find();
+        $query = Notificaciones::find()->alias('n');
+
+        // Solo notificaciones de usuarios que tengan habilitadas las notificaciones en plataforma
+        $query->innerJoinWith('usuarios u')->andWhere(['u.notificar_plataforma' => 1]);
 
         // Mostrar solo las notificaciones de los últimos 10 días
-        $query->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-10 days'))]);
+        $query->andWhere(['>=', 'n.creado_en', date('Y-m-d H:i:s', strtotime('-10 days'))]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
-                'defaultOrder' => ['creado_en' => SORT_DESC],
+                'defaultOrder' => ['n.creado_en' => SORT_DESC],
             ],
         ]);
 

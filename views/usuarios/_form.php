@@ -68,6 +68,16 @@ use yii\widgets\ActiveForm;
 <img id="preview" src="" alt="Previsualización de la foto de perfil" width="150" style="display:none;">
 <?php endif; ?>
 
+<?php if ($operacion == 'edicion'): ?>
+<div class="panel panel-default" style="margin-top:25px;">
+    <div class="panel-heading"><strong>Configuración de notificaciones</strong></div>
+    <div class="panel-body">
+        <?= $form->field($model, 'notificar_plataforma')->checkbox(['label' => 'Recibir notificaciones en la plataforma (campanita)']) ?>
+        <?= $form->field($model, 'notificar_email')->checkbox(['label' => 'Recibir notificaciones por correo electrónico']) ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="form-group mt-5" >
 <?= Html::submitButton('Guardar', ['class' => 'button-g', 'style' => 'width:100%;']) ?>
 

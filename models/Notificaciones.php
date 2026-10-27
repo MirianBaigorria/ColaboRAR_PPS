@@ -103,6 +103,11 @@ class Notificaciones extends \yii\db\ActiveRecord
      */
     public static function crear($usuariosId, $tipo, $titulo, $descripcion = null, $url = null, $gruposFormadosId = null, $tareasId = null)
     {
+        $usuario = Usuarios::findOne($usuariosId);
+        if (!$usuario) {
+            return false;
+        }
+
         $model = new self();
         $model->usuarios_id = $usuariosId;
         $model->tipo = $tipo;
@@ -113,7 +118,49 @@ class Notificaciones extends \yii\db\ActiveRecord
         $model->tareas_id = $tareasId;
         $model->leido = 0;
         $model->creado_en = date('Y-m-d H:i:s');
-        return $model->save(false);
+        $guardado = $model->save(false);
+
+        if ($guardado) {
+            self::enviarPorEmail($model);
+        }
+
+        return $guardado;
+    }
+
+    /**
+     * Envía la notificación por correo electrónico si el usuario lo tiene habilitado.
+     */
+    public static function enviarPorEmail($notificacion)
+    {
+        if (!$notificacion instanceof self) {
+            return;
+        }
+
+        $usuario = $notificacion->usuarios;
+        if (!$usuario) {
+            $usuario = Usuarios::findOne($notificacion->usuarios_id);
+        }
+
+        if (!$usuario) {
+            return;
+        }
+
+        if (isset($usuario->notificar_email) && (int)$usuario->notificar_email === 0) {
+            return;
+        }
+
+        if (empty($usuario->email)) {
+            return;
+        }
+
+        try {
+            Yii::$app->mailer->compose('notificacion', ['notificacion' => $notificacion])
+                ->setTo($usuario->email)
+                ->setSubject($notificacion->titulo)
+                ->send();
+        } catch (\Exception $e) {
+            // No cortar el flujo si falla el envío de correo
+        }
     }
 
     /**
@@ -121,6 +168,11 @@ class Notificaciones extends \yii\db\ActiveRecord
      */
     public static function contarNoLeidas($usuariosId)
     {
+        $usuario = Usuarios::findOne($usuariosId);
+        if ($usuario && isset($usuario->notificar_plataforma) && (int)$usuario->notificar_plataforma === 0) {
+            return 0;
+        }
+
         return (int) self::find()
             ->where(['usuarios_id' => $usuariosId, 'leido' => 0])
             ->andWhere(['>=', 'creado_en', date('Y-m-d H:i:s', strtotime('-10 days'))])
@@ -133,6 +185,11 @@ class Notificaciones extends \yii\db\ActiveRecord
      */
     public static function contarNoLeidasPorGrupo($usuariosId, $tareasId)
     {
+        $usuario = Usuarios::findOne($usuariosId);
+        if ($usuario && isset($usuario->notificar_plataforma) && (int)$usuario->notificar_plataforma === 0) {
+            return [];
+        }
+
         $rows = self::find()
             ->select(['grupos_formados_id', 'COUNT(*) AS total'])
             ->where(['usuarios_id' => $usuariosId, 'leido' => 0, 'tareas_id' => $tareasId])

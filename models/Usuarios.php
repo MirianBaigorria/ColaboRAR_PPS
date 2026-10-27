@@ -138,6 +138,8 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
         return [
             [['username', 'password','pais_idpais','fechanacimiento', 'email', 'nombre', 'apellido'], 'required'],
             [['dni', 'pregunta', 'respuesta', 'institucion'], 'required', 'except' => ['editarPerfilDocente']],
+            [['notificar_plataforma', 'notificar_email'], 'boolean'],
+            [['notificar_plataforma', 'notificar_email'], 'default', 'value' => 1],
             [['tipo'], 'integer'],
             [['username'], 'string', 'max' => 45], 
             ['username', 'unique', 'targetClass' => '\app\models\Usuarios', 'message' => 'Este nombre de usuario, ya existe.'],
@@ -195,6 +197,8 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
             'pregunta' =>'Pregunta de seguridad',
             'respuesta' =>'Respuesta a pregunta de seguridad',
             'institucion' => 'Institución Educativa',
+            'notificar_plataforma' => 'Recibir notificaciones en la plataforma (campanita)',
+            'notificar_email' => 'Recibir notificaciones por correo electrónico',
             //'aceptaterminos' => 'Acepto que mis datos sean utilizados con fines académicos y de investigación. Se resalta que estos datos personales no serán divulgados.'
         ];
     }
