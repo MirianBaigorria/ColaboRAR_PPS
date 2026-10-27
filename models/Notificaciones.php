@@ -154,9 +154,10 @@ class Notificaciones extends \yii\db\ActiveRecord
         }
 
         try {
-            Yii::$app->mailer->compose('notificacion', ['notificacion' => $notificacion])
+            Yii::$app->mailer->compose()
                 ->setTo($usuario->email)
                 ->setSubject($notificacion->titulo)
+                ->setHtmlBody(Yii::$app->view->renderFile('@app/views/mail/notificacion.php', ['notificacion' => $notificacion]))
                 ->send();
         } catch (\Exception $e) {
             // No cortar el flujo si falla el envío de correo
