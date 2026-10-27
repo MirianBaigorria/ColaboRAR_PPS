@@ -252,17 +252,25 @@ class Notificaciones extends \yii\db\ActiveRecord
             $destinatarios = self::getAlumnosDeTarea($tarea);
         } elseif ($modo === 'vence_hoy') {
             $tipo = 'plazo_vence_hoy';
-            $titulo = 'La actividad "' . $tarea->nombre_t . '" vence HOY (' . $fecha . ')';
-            $descripcion = 'La actividad vence hoy. Revisá si requiere alguna acción (cerrarla, reabrirla o hacer seguimiento).';
+            $titulo = 'La tarea vence hoy';
+            $descripcion = $tarea->nombre_t;
             // El día del vencimiento se avisa solo al docente, para que esté atento
             $destinatarios = self::getDocentesDeTarea($tarea);
+        } elseif ($modo === 'vencida') {
+            $tipo = 'plazo_por_vencer';
+            $titulo = 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
+            $descripcion = 'Ya no se pueden enviar mensajes ni archivos.';
+            // Cuando vence, solo se avisa a los alumnos
+            $destinatarios = self::getAlumnosDeTarea($tarea);
         } else {
             $tipo = 'tarea_cerrada';
-            $titulo = 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
-            // Cierre automatico por vencimiento: no hay una persona responsable
-            $descripcion = 'Cerrada automáticamente al vencer la fecha de finalización (' . $fecha . '). Sin responsable.';
-            // El vencimiento se notifica a los alumnos
-            $destinatarios = self::getAlumnosDeTarea($tarea);
+            $titulo = 'La actividad "' . $tarea->nombre_t . '" fue cerrada';
+            if ($tarea->fecha_fin) {
+                $titulo .= ' el ' . $fecha;
+            }
+            $descripcion = 'Actividad cerrada por el docente.';
+            // La notificación de "cerrada" (manual) es solo para los docentes
+            $destinatarios = self::getDocentesDeTarea($tarea);
         }
 
         foreach ($destinatarios as $usuarioId) {

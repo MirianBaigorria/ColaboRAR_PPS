@@ -48,19 +48,19 @@ class NotificacionesController extends Controller
             $diasRestantes = (int) round((strtotime($tarea->fecha_fin) - $hoy) / 86400);
 
             if ($diasRestantes < 0) {
-                // La actividad ya vencio: la cierro automaticamente y notifico a los alumnos
-                $tarea->cerrada = 1;
-                // Cierre automatico: no hay usuario responsable y dejo registro de la fecha
-                $tarea->cerrada_por = null;
-                $tarea->cerrada_en = date('Y-m-d H:i:s');
-                if ($tarea->save(false)) {
+                // La actividad ya venció: NO se cierra automáticamente. Solo se notifica a los alumnos.
+                // El bloqueo del chat se hace por fecha; el docente decide cuándo cerrarla manualmente.
+                if ($tarea->cerrada == 0) {
                     Notificaciones::notificarPlazo($tarea, 'vencida');
-                    $this->stdout("Actividad vencida y cerrada: {$tarea->nombre_t}\n", Console::FG_YELLOW);
                 }
+                $this->stdout("Actividad vencida (sin cerrar): {$tarea->nombre_t}\n", Console::FG_YELLOW);
             } elseif ($diasRestantes === 0) {
                 // Vence hoy: aviso solo al docente para que este atento a posibles acciones
                 Notificaciones::notificarPlazo($tarea, 'vence_hoy');
                 $this->stdout("La actividad vence hoy (aviso al docente): {$tarea->nombre_t}\n", Console::FG_CYAN);
+            } elseif ($diasRestantes === 1) {
+                // Antes avisaba 1 día antes al docente; ahora debe llegar el día del vencimiento.
+                // Se deja sin envío automático para cumplir el nuevo requerimiento.
             } elseif ($diasRestantes === $diasAviso) {
                 // Faltan exactamente $diasAviso dias: aviso del vencimiento a los alumnos
                 Notificaciones::notificarPlazo($tarea, 'por_vencer');
