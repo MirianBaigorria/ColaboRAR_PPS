@@ -354,10 +354,13 @@ $sentenciaApertura = new app\models\SentenciasApertura();
                 style="background-color: #BDE5F8; text-align: center; padding: 5px;" value="Tienes un nuevo evento" />
         </div>
 
-        <?php if ($tarea->cerrada): ?>
-            <?php // Si la actividad esta cerrada no se pueden enviar mensajes ni archivos ?>
+        <?php
+        $fechaFin = $tarea->fecha_fin;
+        $vencidaPorFecha = $fechaFin && $fechaFin < date('Y-m-d');
+        if ($tarea->cerrada || $vencidaPorFecha): ?>
+            <?php // Si la actividad esta cerrada o vencida no se pueden enviar mensajes ni archivos ?>
             <div class="alert alert-warning">
-                🔒 Esta actividad está cerrada: no se pueden enviar mensajes ni archivos.
+                🔒 Esta actividad está <?= $tarea->cerrada ? 'cerrada' : 'vencida' ?>: no se pueden enviar mensajes ni archivos.
             </div>
         <?php else: ?>
         <form id="frmChat">

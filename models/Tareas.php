@@ -114,6 +114,9 @@ class Tareas extends \yii\db\ActiveRecord
     public function getTextoEstado()
     {
         if (!$this->cerrada) {
+            if ($this->fecha_fin && $this->fecha_fin < date('Y-m-d')) {
+                return 'Vencida';
+            }
             return 'Abierta';
         }
 
@@ -126,21 +129,33 @@ class Tareas extends \yii\db\ActiveRecord
             $cierre = null;
         }
 
-        // Cierre automatico por vencimiento: no hay un usuario responsable
-        if (!$this->cerrada_por) {
-            return 'Cerrada automáticamente' . ($cierre ? ' el ' . $cierre : '');
-        }
-
-        // Cierre manual: muestro el nombre del usuario que la cerro
-        $usuario = $this->cerradaPorUsuario;
-        if ($usuario) {
-            $nombre = trim($usuario->nombre . ' ' . $usuario->apellido);
-            if ($nombre === '') {
-                $nombre = $usuario->username;
+        // Cierre manual por docente
+        if ($this->cerrada_por) {
+            $usuario = $this->cerradaPorUsuario;
+            if ($usuario) {
+                $nombre = trim($usuario->nombre . ' ' . $usuario->apellido);
+                if ($nombre === '') {
+                    $nombre = $usuario->username;
+                }
+                return 'Cerrada por ' . $nombre . ($cierre ? ' el ' . $cierre : '');
             }
-            return 'Cerrada por ' . $nombre . ($cierre ? ' el ' . $cierre : '');
+            return 'Cerrada' . ($cierre ? ' el ' . $cierre : '');
         }
 
-        return 'Cerrada';
+        return 'Cerrada' . ($cierre ? ' el ' . $cierre : '');
+    }
+
+    /**
+     * Indica si la tarea ya venció por fecha de finalización.
+     */
+    public function estaVencida()
+    {
+        if ($this->cerrada) {
+            return false;
+        }
+        if ($this->fecha_fin) {
+            return $this->fecha_fin < date('Y-m-d');
+        }
+        return false;
     }
 }
