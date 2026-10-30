@@ -33,6 +33,11 @@ $config = [
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
         ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'useFileTransport' => true,
+            'fileTransportPath' => '@runtime/mail',
+        ],
         'log' => [
             'targets' => [
                 [

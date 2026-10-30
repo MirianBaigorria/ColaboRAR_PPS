@@ -13,15 +13,36 @@ use yii\helpers\Url;
 </head>
 <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px; padding: 30px;">
-        <h2 style="color: #2c3e50; margin-top: 0;"><?= Html::encode($notificacion->titulo) ?></h2>
+        <p style="color: #333333; font-size: 14px; margin: 0 0 10px 0;">
+            <strong><?= Html::encode($notificacion->titulo) ?></strong>
+        </p>
+        <p style="color: #666666; font-size: 12px; margin: 0 0 10px 0;">
+            Recibidos
+        </p>
+        <p style="color: #666666; font-size: 12px; margin: 0 0 25px 0;">
+            No contestar a este correo (vía ColaboRAR)
+        </p>
         
         <?php if (!empty($notificacion->descripcion)): ?>
             <p style="color: #333333; line-height: 1.6;"><?= nl2br(Html::encode($notificacion->descripcion)) ?></p>
+        <?php else: ?>
+            <p style="color: #333333; line-height: 1.6;"><?= Html::encode($notificacion->titulo) ?></p>
         <?php endif; ?>
         
         <?php if (!empty($notificacion->url)): ?>
             <p style="margin-top: 30px;">
-                <a href="<?= Url::to($notificacion->url, true) ?>" style="background-color: #337ab7; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                <?php
+                try {
+                    $url = Url::to($notificacion->url, true);
+                } catch (\Exception $e) {
+                    try {
+                        $url = Url::to($notificacion->url);
+                    } catch (\Exception $e2) {
+                        $url = $notificacion->url;
+                    }
+                }
+                ?>
+                <a href="<?= Html::encode($url) ?>" style="background-color: #337ab7; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 4px; display: inline-block;">
                     Ver en ColaboRAR
                 </a>
             </p>

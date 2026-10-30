@@ -51,7 +51,13 @@ class NotificacionesSearch extends Notificaciones
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
-                'defaultOrder' => ['n.creado_en' => SORT_DESC],
+                'defaultOrder' => ['creado_en' => SORT_DESC],
+                'attributes' => [
+                    'creado_en' => [
+                        'asc' => ['n.creado_en' => SORT_ASC],
+                        'desc' => ['n.creado_en' => SORT_DESC],
+                    ],
+                ],
             ],
         ]);
 

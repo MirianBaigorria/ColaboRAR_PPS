@@ -160,7 +160,17 @@ class Notificaciones extends \yii\db\ActiveRecord
                 ->setHtmlBody(Yii::$app->view->renderFile('@app/views/mail/notificacion.php', ['notificacion' => $notificacion]))
                 ->send();
         } catch (\Exception $e) {
-            // No cortar el flujo si falla el envío de correo
+            // Intentar sin URL absoluta si falla por UrlManager en consola
+            try {
+                $body = Yii::$app->view->renderFile('@app/views/mail/notificacion.php', ['notificacion' => $notificacion]);
+                Yii::$app->mailer->compose()
+                    ->setTo($usuario->email)
+                    ->setSubject($notificacion->titulo)
+                    ->setHtmlBody($body)
+                    ->send();
+            } catch (\Exception $e2) {
+                // No cortar el flujo si falla el envío de correo
+            }
         }
     }
 
@@ -320,8 +330,11 @@ class Notificaciones extends \yii\db\ActiveRecord
             $destinatarios = self::getDocentesDeTarea($tarea);
         } elseif ($modo === 'vencida') {
             $tipo = 'plazo_por_vencer';
-            $titulo = 'La actividad "' . $tarea->nombre_t . '" venció el ' . $fecha;
-            $descripcion = 'Ya no se pueden enviar mensajes ni archivos.';
+            $titulo = 'Vencida: ' . $tarea->nombre_t;
+            $asignatura = $tarea->asignaturas ? $tarea->asignaturas->nombre : '';
+            $curso = $tarea->year ? ' - ' . $tarea->year : '';
+            $descripcion = $tarea->nombre_t . ', del curso ' . $asignatura . $curso . ' venció el ' . $fecha . '.';
+            $descripcion .= "\n\nPuede que aún pueda entregarla, pero la entrega se marcará como tardía.";
             // Cuando vence, solo se avisa a los alumnos
             $destinatarios = self::getAlumnosDeTarea($tarea);
         } else {
