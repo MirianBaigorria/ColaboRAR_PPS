@@ -56,6 +56,8 @@ AppAsset::register($this);
                     ['label' => 'Sentencias de Apertura', 'url' => ['/sentencias-apertura/index']]];
             } elseif (array_key_exists('profesor', $rolesUsuario)) {
                 $oUser = \app\models\Usuarios::findOne(['id' => Yii::$app->user->identity->id]);
+                $testFelderLabel = !empty($oUser->estiloaprendizaje) ? 'Ver resultado - Test de Estilos de Aprendizaje' : 'Test de Estilos de Aprendizaje';
+                $testBigFiveLabel = !empty($oUser->personalidad) ? 'Ver resultado - Test de Personalidad' : 'Test de Personalidad';
                 $opciones = [
                     //Agrego el label para la identificacion de Cuenta Profesor
                     ['label'=> 'Cuenta Profesor',
@@ -67,24 +69,26 @@ AppAsset::register($this);
                     [
                         'label' => 'Mis Test',
                         'items' => [
-                            ['label' => 'Test de Estilos de Aprendizaje', 'url' => ['/usuarios/test-felder-silverman']],
-                            ['label' => 'Test de Personalidad', 'url' => ['/usuarios/test-big-five']],
+                            ['label' => $testFelderLabel, 'url' => ['/usuarios/test-felder-silverman']],
+                            ['label' => $testBigFiveLabel, 'url' => ['/usuarios/test-big-five']],
                         ]
                     ],
                 ];
             } elseif (array_key_exists('estudiante', $rolesUsuario)) {
                 $oUser = \app\models\Usuarios::findOne(['id' => Yii::$app->user->identity->id]);
-                    $opciones = [
-                        ['label'=> 'Cuenta Estudiante',
-                        'url'=> '#',
-                        'linkOptions' => ['class' => 'tipocuenta']],
+                $testFelderLabelEst = !empty($oUser->estiloaprendizaje) ? 'Ver resultado - Test de Estilos de Aprendizaje' : 'Test de Estilos de Aprendizaje';
+                $testBigFiveLabelEst = !empty($oUser->personalidad) ? 'Ver resultado - Test de Personalidad' : 'Test de Personalidad';
+                $opciones = [
+                    ['label'=> 'Cuenta Estudiante',
+                    'url'=> '#',
+                    'linkOptions' => ['class' => 'tipocuenta']],
                     ['label' => 'Editar mi perfil', 'url' => ['/usuarios/actualizar-perfil', 'id' => Yii::$app->security->encryptByPassword(Yii::$app->user->identity->id, $oUser->password)]],
                     ['label' => 'Mis Asignaturas', 'url' => ['/asignaturas/asignaturas-alumnos']],
                     [
                         'label' => 'Mis Test',
                         'items' => [
-                            ['label' => 'Test de Estilos de Aprendizaje', 'url' => ['/usuarios/test-felder-silverman']],
-                            ['label' => 'Test de Personalidad', 'url' => ['/usuarios/test-big-five']],
+                            ['label' => $testFelderLabelEst, 'url' => ['/usuarios/test-felder-silverman']],
+                            ['label' => $testBigFiveLabelEst, 'url' => ['/usuarios/test-big-five']],
                         ]
                     ],
                     // ['label' => 'Tabla de clasificación', 'url' => ['/leaderboard/index']],

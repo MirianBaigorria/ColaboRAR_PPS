@@ -301,6 +301,12 @@ class UsuariosController extends Controller {
 
         $model = $this->findModel(Yii::$app->user->identity->id);
 
+        if (!empty($model->estiloaprendizaje) && !Yii::$app->request->isPost) {
+            return $this->render('test-felder-silverman', [
+                'model' => $model,
+            ]);
+        }
+
         if ($model->load(Yii::$app->request->post())) {
             $activo = 0;
             $reflexivo = 0;
@@ -450,6 +456,12 @@ class UsuariosController extends Controller {
     public function actionTestBigFive() {
 
         $model = $this->findModel(Yii::$app->user->identity->id);
+
+        if (!empty($model->personalidad) && !Yii::$app->request->isPost) {
+            return $this->render('test-big-five', [
+                'model' => $model,
+            ]);
+        }
 
         if ($model->load(Yii::$app->request->post())) {
             $b = true;
