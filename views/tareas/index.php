@@ -48,6 +48,28 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'consigna',
             'descripcion',
+            [
+                'attribute' => 'fecha_fin',
+                'label' => 'Fecha de vencimiento',
+                'value' => function ($model) {
+                    if (!$model->fecha_fin) {
+                        return 'Sin fecha';
+                    }
+                    $timestamp = strtotime($model->fecha_fin);
+                    return $timestamp ? date('d/m/Y', $timestamp) : $model->fecha_fin;
+                },
+            ],
+            [
+                'label' => 'Estado',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    if ((int)$model->cerrada === 1) {
+                        $fechaCierre = $model->cerrada_en ? date('d/m/Y H:i', strtotime($model->cerrada_en)) : '';
+                        return '<span class="label label-danger">Cerrada' . ($fechaCierre ? ' - ' . $fechaCierre : '') . '</span>';
+                    }
+                    return '<span class="label label-success">Abierta</span>';
+                },
+            ],
             'year',
             [
             'class' => 'yii\grid\ActionColumn',
